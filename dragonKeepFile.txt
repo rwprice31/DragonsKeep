@@ -1,4 +1,4 @@
-PRAGMA foreign_keys=OFF;
+﻿PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE monster(monsterID Integer PRIMARY KEY, name String, attackPower Integer, health Integer);
 INSERT INTO "monster" VALUES(1,'Dragon Keeper',1,10);
@@ -17,7 +17,6 @@ INSERT INTO "monster" VALUES(13,'Lowly Ogre',6,12);
 INSERT INTO "monster" VALUES(14,'Spider Queen',80,85);
 INSERT INTO "monster" VALUES(15,'Snake Soldier',5,8);
 INSERT INTO "monster" VALUES(16,'Snake King',9,10);
-INSERT INTO "monster" VALUES(17,'kitten',2,9);
 CREATE TABLE weapon(weaponID Integer PRIMARY KEY, name String, strength Integer);
 INSERT INTO "weapon" VALUES(1,'dagger',6);
 INSERT INTO "weapon" VALUES(2,'Knight''s Sword',31);
