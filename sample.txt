@@ -1,7 +1,7 @@
 ﻿PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE monster(monsterID Integer PRIMARY KEY, name String, myPower Integer, health Integer);
-INSERT INTO "monster" VALUES(1,'Keeper Dragon',1,10);
+CREATE TABLE monster(monsterID Integer PRIMARY KEY, name String, attackPower Integer, health Integer);
+INSERT INTO "monster" VALUES(1,'Dragon Keeper',1,10);
 INSERT INTO "monster" VALUES(2,'Dragon Keeper2',2,12);
 INSERT INTO "monster" VALUES(3,'guard',10,34);
 INSERT INTO "monster" VALUES(4,'Gobbler',15,40);
