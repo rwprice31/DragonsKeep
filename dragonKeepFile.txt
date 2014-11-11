@@ -1,0 +1,74 @@
+PRAGMA foreign_keys=OFF;
+BEGIN TRANSACTION;
+CREATE TABLE monster(monsterID Integer PRIMARY KEY, name String, attackPower Integer, health Integer);
+INSERT INTO "monster" VALUES(1,'Dragon Keeper',1,10);
+INSERT INTO "monster" VALUES(2,'Dragon Keeper2',2,12);
+INSERT INTO "monster" VALUES(3,'Guard',10,34);
+INSERT INTO "monster" VALUES(4,'Gobbler',15,40);
+INSERT INTO "monster" VALUES(5,'Blue Dragon',31,51);
+INSERT INTO "monster" VALUES(6,'Great Argon Lizard',44,67);
+INSERT INTO "monster" VALUES(7,'Great Troll',50,73);
+INSERT INTO "monster" VALUES(8,'Hades Hawk',68,85);
+INSERT INTO "monster" VALUES(9,'Darksteel Dragon',78,92);
+INSERT INTO "monster" VALUES(10,'Legendary Magma Dragon',92,100);
+INSERT INTO "monster" VALUES(11,'Igneel The Dragon Slayer',32,32);
+INSERT INTO "monster" VALUES(12,'Giant Pheasent',4,8);
+INSERT INTO "monster" VALUES(13,'Lowly Ogre',6,12);
+INSERT INTO "monster" VALUES(14,'Spider Queen',80,85);
+INSERT INTO "monster" VALUES(15,'Snake Soldier',5,8);
+INSERT INTO "monster" VALUES(16,'Snake King',9,10);
+INSERT INTO "monster" VALUES(17,'kitten',2,9);
+CREATE TABLE weapon(weaponID Integer PRIMARY KEY, name String, strength Integer);
+INSERT INTO "weapon" VALUES(1,'dagger',6);
+INSERT INTO "weapon" VALUES(2,'Knight''s Sword',31);
+INSERT INTO "weapon" VALUES(3,'Excaliber',60);
+CREATE TABLE armor(armorID Integer PRIMARY KEY, name String, armorDefense Integer);
+INSERT INTO "armor" VALUES(1,'Standard Armor',6);
+INSERT INTO "armor" VALUES(2,'Enchanted Armor',20);
+INSERT INTO "armor" VALUES(3,'Dragon Scales',48);
+CREATE TABLE elixer(elixerID Integer PRIMARY KEY, name String, healthBoost Integer);
+INSERT INTO "elixer" VALUES(1,'Blue Elixer',10);
+INSERT INTO "elixer" VALUES(2,'Green Elixer',50);
+INSERT INTO "elixer" VALUES(3,'Red Elixer',80);
+CREATE TABLE room(
+roomID INT PRIMARY KEY  NOT NULL,
+roomE  INT NULL,
+roomN  INT NULL,
+roomS  INT NULL,
+roomW  INT NULL,
+description String NOT NULL,
+isEmpty Boolean NOT NULL,
+item INT NULL,
+monster INT NULL,
+puzzle INT NULL
+);
+INSERT INTO "room" VALUES(50,NULL,NULL,NULL,49,'You walk into a room and you hear a laugher “ahahaha”. You finally see the Legenary Magma Dragon waiting for you at the end of the dungeon.',0,NULL,10,NULL);
+INSERT INTO "room" VALUES(49,50,NULL,NULL,48,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(48,49,NULL,47,NULL,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(47,NULL,48,NULL,45,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(46,NULL,45,NULL,NULL,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(45,47,NULL,46,42,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(44,41,NULL,NULL,37,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(43,NULL,NULL,37,NULL,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(42,45,NULL,NULL,40,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(41,NULL,NULL,40,44,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(40,42,41,39,NULL,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(39,NULL,40,NULL,38,'You walk into a room, and it’s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(25,NULL,33,36,28,'You walk into a room and you see a chest',0,1,NULL,NULL);
+INSERT INTO "room" VALUES(26,NULL,21,NULL,27,'You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(27,26,NULL,NULL,23,'You walk into a room and you hear a loud screech',0,NULL,12,NULL);
+INSERT INTO "room" VALUES(28,25,NULL,NULL,21,'You walk into a room and you see a torch. What do you want to do',1,NULL,NULL,'');
+INSERT INTO "room" VALUES(29,NULL,NULL,19,NULL,'You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(30,31,NULL,NULL,36,'You walk into a room and find the legendary Dragon Slayer',0,NULL,11,NULL);
+INSERT INTO "room" VALUES(31,NULL,32,NULL,30,'You walk into a room, and its very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(32,38,NULL,31,NULL,'You walk into a room, and its very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(33,NULL,34,25,NULL,'You walk into a room, and its very dark and surprisinhly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(34,35,NULL,33,NULL,'You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(35,37,NULL,NULL,34,'You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(36,30,25,NULL,NULL,'You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(37,44,43,NULL,35,'You walk into a dark room and suddenly see a flaming flying figure',0,NULL,8,NULL);
+INSERT INTO "room" VALUES(38,39,NULL,NULL,32,'You walk into a room and see a great troll',0,NULL,7,NULL);
+CREATE TABLE savedInventory(inventoryID INT PRIMARY KEY NOT NULL, playerID INT NOT NULL, weaponID INT NULL, armorID INT NULL, elixerID INT NULL);
+CREATE TABLE puzzle(puzzleID INT PRIMARY KEY NOT NULL, problem String NOT NULL, solution String NOT NULL,  solved Boolean NOT NULL);
+CREATE TABLE playerFile(playerID INT PRIMARY KEY NOT NULL, name String NOT NULL, hasInventory INT NULL, score INT NULL, health INT NOT NULL);
+COMMIT;
