@@ -1,57 +1,80 @@
-GITHUB COMMANDS: (These only work )
+GITHUB COMMANDS:
 ----------------
 cd .. << moves up one directory
 cd enter folder name  << moves to that directory
 dir  << retrieves a list of the directory contents
 
 
+****Starting off********
+(((!!!)))commands here intentionally lack detail. See COMMAND DETAILS for that.
 
-step 1) enter git branch folder
-step 1.5) if starting new try git clone to create a project specific git folder
+step 1) enter gitHub directory you want to use for github work
+step 1.5) if starting new, type (git clone) to create a project specific git folder
 
 step 2) work on program file in gitHub folder or add/move more files to folder
 
-step 3) when syncing to GitHub try git status, git add, git commit -m, git push
-
+step 3) when syncing to GitHub try (git status), (git add), (git commit -m), (git push)
 
 
 COMMAND DETAILS
 ----------------
 
-gitHub clone enter clone url  << copies from gitHub into the open directory
+git clone enter clone url  << copies from gitHub into the open directory
 git status << used with github folder, it shows what is different between us and gitHub in the sky
-git add  enter name of file << add any changes or files by name. This is case senstive(!)
+git add  "enter name of file" << notice the quotes! This adds a file by name. This is case senstive(!)
 
-git commit << this is locking it into the repository but not synced up to GitHub.com yet.
+
+-----Common add, commit, push commands---------
+
+git add .  << both will add everything in the directory except hidden files
+-- OR -- 
+git add a
+-- OR --
+git add -A  << potentially dangerous since it adds everything including hidden files. Use git add . instead.
+
+
+git commit << this is locking it into the repository but not syncing up to GitHub.com yet.
            << do commit without -m creates a multiline commit message
+?? stuck in git commit, press esc once, then type ":wq" << without the quotes 
+
+
 --  or --
-git commit -m "enter a message" << with the "-m" means we're giving it a message.
+git commit -m "enter a message" << with the -m means we're giving it a message.
+
+
 
 git push  << takes anything in this directory and pushes it to GitHub.com
+git pull  << pulls down from gitHub.com the contents of the branch your currently in.
+git checkout enter branch -- enter file name  << looks into the checkout branch entered and pulls the specified file
 
+
+git merge Everton << merges everton's work inside your open branch
+
+------MISC---------
 git config --global user.email "you@example.com"  << Setting up gitHub.com connection to folder
 git config --global user.name "Your Name"  << Setting up gitHub.com connection
 --Connecting to your own account for pushing purposes is different and requires your password.
 
-git pull  << pulls down from gitHub.com
 
-git add .  << both will add everything in the directory
--- OR -- 
-git add a
-
-git  << the help commands
-
-esc : w q << pressing these buttons gets out of a multiline commit
-
+git << the help command
+git status  << self explanatory
 
 git branch  <<list what branches you have
 git checkout enter one of your branch names  << switches to the branch
 
+git rm readme.md <<< removes file readme.md
+
+
 git rebase --continue  << idk yet what this does
+git fetch git pull  << something for errors, idk
 
 
-git fetch git pull  << something for errors
+====to branch from within a branch/Create a new branch===========
+git clone http:/... << used if you created the new branch on gitHub.com
 
+git checkout -b enter a branch name to create  << creating a new branch via the terminal
+notepad readme.md  << calls this file so an empty branch is not pushed and the branch has your name associated with it and not Jamal's or others
+git push origin enter branch name created
 
 ======Deleting a branch=========
 
@@ -60,14 +83,21 @@ git push origin --delete enter branch name  << deletes the branch from gitHub.co
      -------OR--------
 git push origin :enter branch name  << this is for older gitHub terminals. Same as previous.
 
-
 ===============================
+
+================
+SQLITE3 COMMANDS
+================
+mkdir hope  <<< creates a folder hope in window's cmdl
+sqlite3 sample.db .dump > testDB.txt   <<<< exports db file to txt
+sqlite3 recovery.db < testDB.txt    <<<<  imports txt file to EMPTY db
+===============
+
 
 
 ----- cycle process Basics--
 (after making a change)
-do git add
+git add
 git commit
 git push
 ----------------------------
-https://github.com/rwprice31/DragonsKeep.git
