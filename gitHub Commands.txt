@@ -19,7 +19,7 @@ step 3) when syncing to GitHub try (git status), (git add), (git commit -m), (gi
 COMMAND DETAILS
 ----------------
 
-gitHub clone enter clone url  << copies from gitHub into the open directory
+git clone enter clone url  << copies from gitHub into the open directory
 git status << used with github folder, it shows what is different between us and gitHub in the sky
 git add  "enter name of file" << notice the quotes! This adds a file by name. This is case senstive(!)
 
@@ -45,9 +45,10 @@ git commit -m "enter a message" << with the -m means we're giving it a message.
 
 git push  << takes anything in this directory and pushes it to GitHub.com
 git pull  << pulls down from gitHub.com the contents of the branch your currently in.
+git checkout enter branch -- enter file name  << looks into the checkout branch entered and pulls the specified file
 
 
-git merge everton << merges everton's work inside your open branch
+git merge Everton << merges everton's work inside your open branch
 
 ------MISC---------
 git config --global user.email "you@example.com"  << Setting up gitHub.com connection to folder
@@ -55,7 +56,7 @@ git config --global user.name "Your Name"  << Setting up gitHub.com connection
 --Connecting to your own account for pushing purposes is different and requires your password.
 
 
-git << the help commands
+git << the help command
 git status  << self explanatory
 
 git branch  <<list what branches you have
