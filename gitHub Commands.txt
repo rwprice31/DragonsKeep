@@ -53,6 +53,16 @@ git rebase --continue  << idk yet what this does
 git fetch git pull  << something for errors
 
 
+======Deleting a branch=========
+
+git branch -D enter branch name << deletes the branch locally
+git push origin --delete enter branch name  << deletes the branch from gitHub.com
+     -------OR--------
+git push origin :enter branch name  << this is for older gitHub terminals. Same as previous.
+
+
+===============================
+
 
 ----- cycle process Basics--
 (after making a change)
