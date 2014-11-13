@@ -3,6 +3,7 @@ GITHUB COMMANDS:
 cd .. << moves up one directory
 cd enter folder name  << moves to that directory
 dir  << retrieves a list of the directory contents
+mkdir hope  <<< creates a folder hope in window's cmdl
 
 
 ****Starting off********
@@ -88,7 +89,6 @@ git push origin :enter branch name  << this is for older gitHub terminals. Same 
 ================
 SQLITE3 COMMANDS
 ================
-mkdir hope  <<< creates a folder hope in window's cmdl
 sqlite3 sample.db .dump > testDB.txt   <<<< exports db file to txt
 sqlite3 recovery.db < testDB.txt    <<<<  imports txt file to EMPTY db
 ===============
