@@ -3,7 +3,6 @@ GITHUB COMMANDS:
 cd .. << moves up one directory
 cd enter folder name  << moves to that directory
 dir  << retrieves a list of the directory contents
-mkdir hope  <<< creates a folder hope in window's cmdl
 
 
 ****Starting off********
@@ -43,7 +42,7 @@ git commit << this is locking it into the repository but not syncing up to GitHu
 git commit -m "enter a message" << with the -m means we're giving it a message.
 
 
-
+((!)) If (git push) returns "Fatal: The current branch _________ does not have
 git push  << takes anything in this directory and pushes it to GitHub.com
 git pull  << pulls down from gitHub.com the contents of the branch your currently in.
 git checkout enter branch -- enter file name  << looks into the checkout branch entered and pulls the specified file
@@ -89,6 +88,7 @@ git push origin :enter branch name  << this is for older gitHub terminals. Same 
 ================
 SQLITE3 COMMANDS
 ================
+mkdir hope  <<< creates a folder hope in window's cmdl
 sqlite3 sample.db .dump > testDB.txt   <<<< exports db file to txt
 sqlite3 recovery.db < testDB.txt    <<<<  imports txt file to EMPTY db
 ===============
