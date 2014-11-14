@@ -1,4 +1,4 @@
-PRAGMA foreign_keys=OFF;
+﻿PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE monster(monsterID Integer PRIMARY KEY, name String, attackPower Integer, health Integer);
 INSERT INTO "monster" VALUES(1,'Dragon Keeper',1,10);
