@@ -32,7 +32,6 @@ git add a
 -- OR --
 git add -A  << potentially dangerous since it adds everything including hidden files. Use git add . instead.
 
-
 git commit << this is locking it into the repository but not syncing up to GitHub.com yet.
            << do commit without -m creates a multiline commit message
 ?? stuck in git commit, press esc once, then type ":wq" << without the quotes 
@@ -45,6 +44,7 @@ git commit -m "enter a message" << with the -m means we're giving it a message.
 
 git push  << takes anything in this directory and pushes it to GitHub.com
 git pull  << pulls down from gitHub.com the contents of the branch your currently in.
+
 git checkout enter branch -- enter file name  << looks into the checkout branch entered and pulls the specified file
 
 
