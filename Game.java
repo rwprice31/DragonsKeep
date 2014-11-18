@@ -1,9 +1,11 @@
 package View;
 
+import Model.*;
+
 /**
  * author: JJ Lindsay
  * version: 1.0
- * Course: ITEC 3150 Fall 2014
+ * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
  * This class represents a ...
@@ -18,7 +20,7 @@ public class Game
     private static Monster monster;
     private static Armor amor;
     private static Weapon weapon;
-    private static Elixer elixer;
+    private static Elixir elixer;
     private static Puzzle puzzle;
     private static Rooms rooms;
     private static int currentRoom;

@@ -1,4 +1,4 @@
-/**Class: Elixer
+package Model; /**Class: Elixer
  *
 @author Everton Gardiner Jr.	
  * @version 1.0
@@ -16,29 +16,22 @@
  * @author egardiner
  *
  */
-public class Elixer extends Items
+public class Elixir extends Item
 {
 	private int healthBoost;
-	/**
-	 * Method: Constructor 
-	 * No argument constructor for Elixer class
-	 * 
-	 */
-	public Elixer()
-	{
-		// TODO Auto-generated constructor stub
-	}
 
 	/**
 	 * Method: Constructor
 	 * Constructor for Elixer class
-	 * @param aItemName
+	 * @param name
+     * @param healthBoost
 	 */
-	public Elixer(String aItemName,int aHealthBoost)
+	public Elixir(String name, int healthBoost)
 	{
-		super(aItemName);
-		this.healthBoost = aHealthBoost;
-		// TODO Auto-generated constructor stub
+        //parsing must happen outside this class
+        //String[] attributes = elixirAttributes.split("[|]]");
+        super(name);
+        this.healthBoost = healthBoost;
 	}
 
 	/**
@@ -54,21 +47,10 @@ public class Elixer extends Items
 	/**
 	 * Method: setHealthBoost
 	 * This method changes the health boost of the Elixer object
-	 * @param The new health boost of the Elixer object
+	 * @param healthBoost new health boost of the Elixer object
 	 */
 	public void setHealthBoost(int healthBoost)
 	{
 		this.healthBoost = healthBoost;
 	}
-
-	/**
-	 * Method: to string
-	 */
-	@Override
-	public String toString()
-	{
-		return "Elixer [healthBoost=" + healthBoost + "]";
-	}
-
-
 }

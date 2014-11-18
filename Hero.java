@@ -1,41 +1,35 @@
-package model;
+package Model;
 
-public class Hero extends Actor{
+public class Hero extends Actor
+{
 
 	private Inventory inventory;
 	private int score;
 	private int defenseStrength;
-	private String allAttributes;
-	
-	//create a new Hero/player
-	public Hero() {
-		super();
+
+	//create a new Hero/player for the first time
+	public Hero(String name) {
+		super(name);
 		score = 0;
 		defenseStrength = 0;
+        inventory = null;
 	}
 	
 	//call Hero from playerFile table
-	public Hero(String allAttributes) {
-		super();
-		this.allAttributes = allAttributes;
+	public Hero(String name, int score, int health) {
+		super(name, health);
+		this.score = score;
+        inventory = null;  //create inventory will update this.
 	}
 	
-	public void createInventory() {
-		
-	}
-	
-	public void createInventory(String allCollectedItems) {
-		
+	public void createInventory()
+    {
+        inventory = new Inventory();
 	}
 
-	//get item from inventory
-	protected Inventory getInventory() {
+	//Retrieve the inventory, doing so allows access to Inventory methods
+	public Inventory getInventory() {
 		return inventory;
-	}
-
-	//add new item to inventory
-	protected void addInventory(Inventory inventory, Item weapArmElix, Char itemType) {
-		this.inventory = inventory.add(weapArmElix, itemType);
 	}
 
 	protected int getScore() {
@@ -53,5 +47,4 @@ public class Hero extends Actor{
 	protected void setDefenseStrength(int defenseStrength) {
 		this.defenseStrength = defenseStrength;
 	}
-
 }

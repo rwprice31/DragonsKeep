@@ -1,31 +1,30 @@
-package com.company;
+package Model;
 
-//Defines an inventory
+/**
+ * author: JJ Lindsay
+ * version: 1.0
+ * Course: ITEC 3860 Fall 2014
+ * Written: 11/16/2014
+ *
+ * This class represents a ...
+ *
+ * Purpose: Allows the manipulation of a ...
+ */
 public class Inventory
 {
     private final int SIZELIMIT = 10;
     private Item[] ruckSack;
-    Char[] itemType;
-
-    //Repopulates an inventory from a save.
-    public Inventory(String allCollectedItems)
-    {
-        ruckSack = new Item[10];
-
-        //parse String and load into ruckSack
-        String items[] = allCollectedItems.split("[|]]"); // I don't know how items come from the database yet
-        // ...
-    }
+    char[] itemType; //A, E, W for armor, elixir, or weapon
 
     //Creates an empty Inventory
     public Inventory()
     {
         ruckSack = new Item[SIZELIMIT];
-        itemType = new Char[SIZELIMIT];
+        itemType = new char[SIZELIMIT];
     }
 
     //Adds an item to the inventory
-    public void add(Item weapArmElix, Char itemType)
+    public void add(Item weapArmElix, char itemType)
     {
         int x = 0;
         boolean stop = false;
@@ -40,11 +39,13 @@ public class Inventory
             }
             else if(x < SIZELIMIT)
             {
+                //Move the pointer to the next slot in inventory.
                 x++;
             }
             else
             {
                 stop = true;
+                System.out.println("You are unable to carry any more items.");
             }
         }
     }
@@ -57,19 +58,21 @@ public class Inventory
 
         while (!stop)
         {
-            if (ruckSack[x].getName.equalsIgnoreCase(weaponArmElix))
+            if (ruckSack[x].getItemName().equalsIgnoreCase(weaponArmElix))
             {
-                itemType[x] = null;
+                itemType[x] = ' ';
                 ruckSack[x] = null;
                 stop = true;
             }
             else if(x < SIZELIMIT)
             {
+                //Move the pointer to the next slot in inventory.
                 x++;
             }
             else
             {
                 stop = true;
+                System.out.println(weaponArmElix + " could not be found in your inventory.");
             }
         }
     }
@@ -95,10 +98,10 @@ public class Inventory
 
         while (!stop)
         {
-            if (ruckSack[x].getName.equalsIgnoreCase(itemName))
+            if (ruckSack[x].getItemName().equalsIgnoreCase(itemName))
             {
-                System.out.print("Item type: " + itemType[i]);
-                System.out.println(" Item: " + ruckSack[i]);
+                System.out.print("Item type: " + itemType[x]);
+                System.out.println(" Item: " + ruckSack[x]);
                 stop = true;
             }
             else if(x < SIZELIMIT)
@@ -108,6 +111,7 @@ public class Inventory
             else
             {
                 stop = true;
+                System.out.println(itemName + " could not be found in your inventory.");
             }
         }
     }

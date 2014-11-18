@@ -1,19 +1,9 @@
-package model;
+package Model;
 
-public class Monster extends Actor{
-
-	private int attackPower;	
-	private String monsterAttributes;
-	
+public class Monster extends Actor
+{
 	//call Monster from monster table
-	public Monster(String monsterAttributes) {
-		super();
-		this.monsterAttributes = monsterAttributes;
+	public Monster(String name, int attackPower, int health) {
+		super(name, health, attackPower);
 	}
-	
-	protected int getAttackPower() {
-		return attackPower;
-		
-	}
-
 }

@@ -1,21 +1,28 @@
-package model;
+package Model;
 
-abstract class Actor {
+abstract class Actor
+{
 	
 	private String name;
 	private int health;	
 	private int attackPower;
-	
-	//create a new Actor
-	public Actor() {		
-		health = 100;
-		attackPower = 0;
-	}
-	
+
 	//call an actor from exist account
 	public Actor(String name) {
-		this.name = name;
+		this(name, 100, 0);
 	}
+
+    public Actor (String name, int health)
+    {
+        this(name, health, 0);
+    }
+
+    protected Actor(String name, int health, int attackPower)
+    {
+        this.name = name;
+        this.health = health;
+        this.attackPower = attackPower;
+    }
 
 	protected String getName() {
 		return name;

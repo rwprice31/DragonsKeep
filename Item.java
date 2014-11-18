@@ -1,4 +1,4 @@
-/**Class: Item
+package Model; /**Class: Item
  *
 @author Everton Gardiner Jr.	
  * @version 1.0
@@ -16,27 +16,18 @@
  * @author egardiner
  *
  */
-public class Items
+abstract class Item
 {
-
 	private String itemName;
-	/**
-	 * Method: Constructor for Items class
-	 * No argument constructor for Item class
-	 */
-	public Items()
-	{
-
-	}
 
 	/**
 	 * Method: Constructor for Items class
 	 * Contructor for Items class that has a String as an argument
-	 * @param aItemName
+	 * @param itemName
 	 */
-	public Items(String aItemName)
+	protected Item(String itemName)
 	{
-		this.itemName = aItemName;
+		this.itemName = itemName;
 	}
 
 	/**
@@ -51,22 +42,10 @@ public class Items
 	/**
 	 * Method: setItemName
 	 * This method changes the item name of the object
-	 * @param The new item name of the object
+	 * @param itemName new item name of the object
 	 */
 	public void setItemName(String itemName)
 	{
 		this.itemName = itemName;
 	}
-
-	/**
-	 * Method: To String
-	 */
-	@Override
-	public String toString()
-	{
-		return "Items [itemName=" + itemName + "]";
-	}
-
-
-
 }

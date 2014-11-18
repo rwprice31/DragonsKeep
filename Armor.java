@@ -1,4 +1,4 @@
-/**Class: Armor
+package Model; /**Class: Armor
  *
 @author Everton Gardiner Jr.	
  * @version 1.0
@@ -16,29 +16,20 @@
  * @author egardiner
  *
  */
-public class Armor extends Items
+public class Armor extends Item
 {
 
 	private int armorDefense;
-	/**
-	 * Method: Constructor for Armor class
-	 * No argument constructor for Armor class
-	 */
-	public Armor()
-	{
-		// TODO Auto-generated constructor stub
-	}
 
 	/**
 	 * Method: Constructor for Armor class
 	 * Constructor for Armor class that has int String, and int as arguments
-	 * @param aItemName
+	 * @param itemName
 	 */
-	public Armor(String aItemName,int aHealthBoost)
+	public Armor(String itemName,int armorDefense)
 	{
-		super(aItemName);
-		this.armorDefense = aHealthBoost;
-		// TODO Auto-generated constructor stub
+		super(itemName);
+		this.armorDefense = armorDefense;
 	}
 
 	/**
@@ -54,21 +45,10 @@ public class Armor extends Items
 	/**
 	 * Method: setHealthBoost
 	 * This method changes the current health boost of the Armor object
-	 * @param The new health boost of the Armor object
+	 * @param armorDefense new armor Defense of the Armor object
 	 */
-	public void setHealthBoost(int healthBoost)
+	public void setHealthBoost(int armorDefense)
 	{
-		this.armorDefense = healthBoost;
+		this.armorDefense = armorDefense;
 	}
-
-	/**
-	 * Method: to String
-	 */
-	@Override
-	public String toString()
-	{
-		return "Armor [healthBoost=" + armorDefense + "]";
-	}
-	
-
 }

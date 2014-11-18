@@ -1,6 +1,5 @@
 package Controller;
 
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,7 +9,7 @@ import java.sql.Statement;
 /**
  * author: JJ Lindsay
  * version: 1.0
- * Course: ITEC 3150 Fall 2014
+ * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
  * This class represents a ...
@@ -19,9 +18,11 @@ import java.sql.Statement;
  */
 public class Controller
 {
-    private Connection conn; //used to connect to the db
-    private Statement stmt;
-    private int timeOut;
+    private static Statement stmt;
+    private static ResultSet rs = null;
+    private static Controller tdb = new Controller();
+    private static boolean duplicateKey = true;
+    private static int key = 1;
 
     private Controller()
     {
@@ -42,12 +43,12 @@ public class Controller
         String dbURL = jdbc + ":" + database;
 
         //Set db timeout
-        timeOut = 30;
+        int timeOut = 30;
 
         try
         {
             //Establish a connection to the database
-            conn = DriverManager.getConnection(dbURL);
+            Connection conn = DriverManager.getConnection(dbURL);
             //Create a container for the SQL statement
             stmt = conn.createStatement();
             //set timeout on the statement
@@ -62,17 +63,15 @@ public class Controller
     //verifies the user account exists
     public static boolean loginAccount(String playerName)
     {
-        Controller tdb = new Controller();
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select name from playerFile");
+            rs = tdb.query(tdb, "Select name from playerFile");
 
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
-                if (playerName.equalsIgnoreCase(rs.getString("name")))
-                    return true;
+                if (playerName.equalsIgnoreCase(rs.getString("name"))){return true;}
             }
             return false;
         }
@@ -80,15 +79,12 @@ public class Controller
         {
             System.out.println(sqe.getMessage());
         }
+        return true;
     }
 
     //creates a user profile
     public static boolean createAccount(String name)
     {
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
-
         while (duplicateKey)
         {
             boolean err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
@@ -97,21 +93,18 @@ public class Controller
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                //throw ends the process!
+                //throw new AssertionError("Entered duplicate key in db");
             }
             else
                 duplicateKey = false;
         }
-        return !err;
+        return true;
     }
 
     //creates a new puzzle
     public static boolean createPuzzle(String puzzle, String answer, String successMessage, String failureMessage, int isSolved)
     {
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
-
         while (duplicateKey)
         {
             boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, puzzle, answer, successMessage, failureMessage, isSolved) " +
@@ -120,22 +113,19 @@ public class Controller
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                //throw ends the process!
+                //throw new AssertionError("Entered duplicate key in db");
             }
             else
                 duplicateKey = false;
         }
-        return !err;
+        return true;
 
     }
 
     //creates a new monster
     public static boolean createMonster(int monsterID, String name, int attackPower, int health)
     {
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
-
         while (duplicateKey)
         {
             boolean err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
@@ -144,24 +134,24 @@ public class Controller
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                //throw ends the process!
+                //throw new AssertionError("Entered duplicate key in db");
             }
             else
                 duplicateKey = false;
         }
-        return !err;
+        return true;
     }
 
     //retrieves all the rooms
     public static String loadAllRooms()
     {
-        Controller tdb = new Controller();
         StringBuilder roomBuilder = new StringBuilder();
 
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from rooms");
+            rs = tdb.query(tdb, "Select * from rooms");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -187,13 +177,15 @@ public class Controller
                 roomBuilder.append("|");
                 roomBuilder.append(rs.getInt("Monster"));
                 roomBuilder.append("|");
-                roomBuilder.append(rs.getInt("Puzzle") + "|");
+                roomBuilder.append(rs.getInt("Puzzle"));
+                roomBuilder.append("|");
             }
         }
         catch(SQLException sqe)
         {
             System.out.println(sqe.getMessage());
         }
+        roomBuilder.deleteCharAt(roomBuilder.lastIndexOf("|"));
         return roomBuilder.toString();
 
     }
@@ -201,13 +193,12 @@ public class Controller
     //(1/2) this is called first from Game class. loads the player profile after loginAccount returns true
     public static String loadHero()
     {
-        Controller tdb = new Controller();
         StringBuilder heroBuilder = new StringBuilder();
 
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from playerFile");
+            rs = tdb.query(tdb, "Select * from playerFile");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -234,13 +225,12 @@ public class Controller
     //(2/2) This is called from Game class auto once loadHero is called
     public static String loadHeroInventory(int playerID)
     {
-        Controller tdb = new Controller();
         StringBuilder heroInventory = new StringBuilder();
 
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from savedInventory where playerID = " + playerID + " " );
+            rs = tdb.query(tdb, "Select * from savedInventory where playerID = " + playerID + " " );
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -265,11 +255,11 @@ public class Controller
     public static String retrieveMonster(int monsterIndex)
     {
         StringBuilder monsterBuilder = new StringBuilder();
-        Controller tdb = new Controller();
+
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from monster");
+            rs = tdb.query(tdb, "Select * from monster");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -294,11 +284,11 @@ public class Controller
     public static String retrieveArmor(int armorIndex)
     {
         StringBuilder armorBuilder = new StringBuilder();
-        Controller tdb = new Controller();
+
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from armor");
+            rs = tdb.query(tdb, "Select * from armor");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -321,11 +311,11 @@ public class Controller
     public static String retrieveElixir(int elixirIndex)
     {
         StringBuilder elixirBuilder = new StringBuilder();
-        Controller tdb = new Controller();
+
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from elixir");
+            rs = tdb.query(tdb, "Select * from elixir");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -348,11 +338,11 @@ public class Controller
     public static String retrieveWeapon(int weaponIndex)
     {
         StringBuilder weaponBuilder = new StringBuilder();
-        Controller tdb = new Controller();
+
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from weapon");
+            rs = tdb.query(tdb, "Select * from weapon");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -375,11 +365,11 @@ public class Controller
     public static String retrievePuzzle(int puzzleIndex)
     {
         StringBuilder puzzleBuilder = new StringBuilder();
-        Controller tdb = new Controller();
+
         try
         {
             //Query the database. Returns the results in a ResultSet
-            ResultSet rs = tdb.query(tdb, "Select * from puzzle");
+            rs = tdb.query(tdb, "Select * from puzzle");
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -404,85 +394,96 @@ public class Controller
         return puzzleBuilder.toString();
     }
 
-//VERY UNFINISHED!!!!!!!!!!--------------------------------------
     //save the Hero attributes to the database
     public static Boolean saveHeroData(String heroAttributes)
     {
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
+        String[] savedHero = heroAttributes.split("[|]");
 
         while (duplicateKey)
         {
-            boolean err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
-                    "values (" + key + ", \'" + name + "\'," + attackPower + "," + health + ")");
+            //May want to modify this and the table to save defenseStrength and armorDefense OR the player can just re-equip these
+            boolean err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
+                    "values (" + savedHero[0] + ", " + savedHero[1] + ", " + savedHero[2] + ", " + savedHero[3] + ", " + savedHero[4] + ")");
 
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                tdb.modData(tdb, "UPDATE playerFile SET name = \'" + savedHero[1] + "\', hasInventory = " + savedHero[2] + ", score = " +
+                        savedHero[3] + ", health = " + savedHero[4] + "WHERE playerID = " + savedHero[0]);
             }
             else
                 duplicateKey = false;
         }
-        return !err;
+        return true;
     }
 
-//VERY UNFINISHED!!!!!!!!!!--------------------------------------NO TABLE EXISTS YET!!!
+    // UNFINISHED!!!!!!!!!!--------------------------------------NO TABLE EXISTS YET!!!
     //save the rooms state to the savedRooms table
-    public static Boolean saveRoomState(String roomsState)
+    //array should have key, playerID, and 1-50 rooms 0 or 1 for false/true is the room empty
+    public static Boolean saveRoomState(String[] roomsState)
     {
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
+        StringBuilder rooms = new StringBuilder();
+        rooms.append("values (");
+        rooms.append(key);
+        rooms.append(", ");
+        rooms.append(roomsState[0]); //this is the playerID
+
+        //
+        for (int i = 1; i < roomsState.length; i++)
+        {
+            rooms.append(", ");
+            rooms.append(roomsState[i]);
+        }
+        rooms.append(")");
 
         while (duplicateKey)
         {
-            boolean err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
-                    "values (" + key + ", \'" + name + "\'," + attackPower + "," + health + ")");
+            //Need to create a savedRooms table
+            boolean err = tdb.modData(tdb, "Insert into Rooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
+                    //"values (" + key + ", " + playerID + ", " + attackPower + ", " + health + ")");
 
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                //throw ends the process!
+                //throw new AssertionError("Entered duplicate key in db");
             }
             else
                 duplicateKey = false;
         }
-        return !err;
+        return true;
     }
 
-//VERY UNFINISHED!!!!!!!!!!--------------------------------------
     //Save the hero's inventory to the inventory table
+    //inventoryState is playerID, itemType and item name
     public static Boolean saveHeroInventory(String inventoryState)
     {
         String[] heroItems = inventoryState.split("[|]");
-        boolean duplicateKey = true;
-        int key = 1;
-        Controller tdb = new Controller();
+        boolean err;
         int inventorySize = heroItems.length;
-        int[] wIndex = 0;
-        int[] aIndex;
-        int[] eIndex;
+        int[] wIndex = new int[(inventorySize-1)/2];
+        int[] aIndex = new int[(inventorySize-1)/2];
+        int[] eIndex = new int[(inventorySize-1)/2];
 
         //InventoryState = itemType|name
         //PARSE inventoryState
-        for (int x = 0; x < inventorySize; x++)
+        for (int x = 1; x < inventorySize-1; x+=2)
         {
             if (heroItems[x].equalsIgnoreCase("w"))
             {
                 try
                 {
                     //Query the database. Returns the results in a ResultSet
-                    ResultSet rs = tdb.query(tdb, "Select * from weapon");
+                    rs = tdb.query(tdb, "Select * from weapon");
                     //Loop over the result set. next moves the cursor to the next record and returns the current record
                     while(rs.next())
                     {
-                        if (rs.getString("weaponName") == heroItems[x+1])
+                        if (rs.getString("weaponName").equalsIgnoreCase(heroItems[x+1]))
                         {
-                            wIndex[x] = rs.getInt("weaponID");
-                            aIndex[x] = 0;
-                            eIndex[x] = 0;
+                            wIndex[x-1] = rs.getInt("weaponID");
+                            aIndex[x-1] = 0;
+                            eIndex[x-1] = 0;
+                            break;
                         }
                     }
                 }
@@ -492,31 +493,81 @@ public class Controller
                 }
             }
             else if (heroItems[x].equalsIgnoreCase("a"))
-            {}
+            {
+                try
+                {
+                    //Query the database. Returns the results in a ResultSet
+                    rs = tdb.query(tdb, "Select * from armor");
+                    //Loop over the result set. next moves the cursor to the next record and returns the current record
+                    while(rs.next())
+                    {
+                        if (rs.getString("armorName").equalsIgnoreCase(heroItems[x+1]))
+                        {
+                            wIndex[x-1] = 0;
+                            aIndex[x-1] = rs.getInt("armorID");
+                            eIndex[x-1] = 0;
+                            break;
+                        }
+                    }
+                }
+                catch(SQLException sqe)
+                {
+                    System.out.println(sqe.getMessage());
+                }
+            }
             else if (heroItems[x].equalsIgnoreCase("e"))
-            {}
-            else { continue;}
+            {
+                try
+                {
+                    //Query the database. Returns the results in a ResultSet
+                    rs = tdb.query(tdb, "Select * from elixir");
+                    //Loop over the result set. next moves the cursor to the next record and returns the current record
+                    while(rs.next())
+                    {
+                        if (rs.getString("elixirName").equalsIgnoreCase(heroItems[x+1]))
+                        {
+                            wIndex[x-1] = 0;
+                            aIndex[x-1] = 0;
+                            eIndex[x-1] = rs.getInt("elixirID");
+                            break;
+                        }
+                    }
+                }
+                catch(SQLException sqe)
+                {
+                    System.out.println(sqe.getMessage());
+                }
+            }
         }
 
         while (duplicateKey)
         {
-            boolean err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
-                    "values (" + key + ", \'" + name + "\'," + attackPower + "," + health + ")");
+            err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
+                    "values (" + key + ", " + heroItems[0] + ", " + wIndex[0] + ", " + aIndex[0] + ", " + eIndex[0]+ ")");
 
             if (err)
             {
                 key++;
-                throw new AssertionError("Entered duplicate key in db");
+                //throw ends the process!
+                // throw new AssertionError("Entered duplicate key in db");
             }
             else
+            {
+                key++;
+                for (int i = 1; i < wIndex.length; i++)
+                {
+                    tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
+                            "values (" + key + ", " + heroItems[0] + ", " + wIndex[i] + ", " + aIndex[i] + ", " + eIndex[i] + ")");
+                }
                 duplicateKey = false;
+            }
         }
-        return !err;
+        return true;
     }
 
     private ResultSet query(Controller tdb, String sql)
     {
-        ResultSet rs = null;
+        rs = null;
         try
         {
             rs = tdb.stmt.executeQuery(sql);
@@ -530,7 +581,6 @@ public class Controller
 
     private boolean modData(Controller tdb, String sql)
     {
-        boolean success = true;
         try
         {
             tdb.stmt.executeUpdate(sql);
@@ -539,6 +589,6 @@ public class Controller
         {
             sqe.printStackTrace();
         }
-        return success;
+        return true;
     }
 }
