@@ -1,4 +1,4 @@
-package model;
+package com.Model;
 
 abstract class Actor {
 	

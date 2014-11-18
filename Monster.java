@@ -1,4 +1,4 @@
-package model;
+package com.Model;
 
 public class Monster extends Actor{
 
