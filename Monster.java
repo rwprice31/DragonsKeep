@@ -1,5 +1,6 @@
 package Model;
 
+
 public class Monster extends Actor
 {
 	//call Monster from monster table
