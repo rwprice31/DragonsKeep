@@ -85,10 +85,30 @@ public class Controller
     //creates a user profile
     public static boolean createAccount(String name)
     {
-        while (duplicateKey)
-        {
-            boolean err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
-                    "values (" + key + ", \'" + name + "\'," + null + "," + 0 + "," + 100 + ",)");
+
+
+//        try
+//        {
+//            //Query the database. Returns the results in a ResultSet
+//            ResultSet rs = tdb.query(tdb, "Select * from monster");
+//            //Loop over the result set. next moves the cursor to the next record and returns the current record
+//            while(rs.next())
+//            {
+//                System.out.println("The monster ID is " + rs.getInt("monsterID"));
+//                System.out.println("The monster name is " + rs.getString("name"));
+//                System.out.println("The monster attackPower " + rs.getInt("attackPower"));
+//                System.out.println("the monster health " + rs.getInt("health") + "\n");
+//            }
+//        }
+//        catch(SQLException sqe)
+//        {
+//            System.out.println(sqe.getMessage());
+//        }
+//      ---------------------------------------------------------
+        //while (duplicateKey)
+        //{
+            boolean err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
+                    "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
 
             if (err)
             {
@@ -98,7 +118,7 @@ public class Controller
             }
             else
                 duplicateKey = false;
-        }
+       // }
         return true;
     }
 

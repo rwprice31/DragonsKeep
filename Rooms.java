@@ -1,4 +1,6 @@
-import java.util.Arrays;
+package Model;
+
+import java.util.ArrayList;
 
 /**Class: Rooms
  *
@@ -22,196 +24,118 @@ public class Rooms
 {
 	private String introduction;
 	private String howToPlay;
-	private String [] roomDescription =  new String [50];
-	private boolean [] isMonster =  new boolean [50];
-	private boolean[] isElixer = new boolean[50];
-	private boolean [] isArmor =  new boolean [50];
-	private boolean [] isWeapon =  new boolean [50];
-	private boolean [] isPuzzle =  new boolean [50];
-	private boolean [] isEmpty =  new boolean [50];
-	private String [] choices =  new String [50];
+    private ArrayList<Integer> roomID;
+    private ArrayList<String>  roomDescription;
+	private ArrayList<Integer> isMonster;
+	private ArrayList<Integer> isElixir;
+	private ArrayList<Integer> isArmor;
+	private ArrayList<Integer> isWeapon;
+	private ArrayList<Integer> isPuzzle;
+	private ArrayList<Integer> isEmpty; // 0 or 1 acts as sqlite boolean
+	private ArrayList<String[]> choices;
 
 
-	/**
-	 * 
-	 */
-	public Rooms()
-	{
 
-	}
-	public Rooms(String aIntroduction, String aHowToPlay, String[] aRoomDescription, boolean[] aIsMonster,
-			boolean[] aIsItem, boolean[] aIsElixer, boolean[] aIsArmor, boolean[] aIsWeapon, boolean[] aIsPuzzle, boolean[] aIsEmpty, String[] aChoices)
-	{
-		this.introduction = aIntroduction;
-		this.howToPlay = aHowToPlay;
-		this.roomDescription = aRoomDescription;
-		this.isMonster = aIsMonster;
-		this.isElixer = aIsElixer;
-		this.isArmor = aIsArmor;
-		this.isWeapon = aIsWeapon;
-		this.isPuzzle = aIsPuzzle;
-		this.isEmpty = aIsEmpty;
-		this.choices = aChoices;
-		
-	}
-	/**
-	 * @return the introduction
-	 */
-	public String getIntroduction()
-	{
-		return introduction;
-	}
-	/**
-	 * @return the howToPlay
-	 */
-	public String getHowToPlay()
-	{
-		return howToPlay;
-	}
-	/**
-	 * @return the roomDescription
-	 */
-	public String[] getRoomDescription()
-	{
-		return roomDescription;
-	}
-	/**
-	 * @return the isMonster
-	 */
-	public boolean[] getIsMonster()
-	{
-		return isMonster;
-	}
-	/**
-	 * @return the isElixer
-	 */
-	public boolean[] getIsElixer()
-	{
-		return isElixer;
-	}
-	/**
-	 * @return the isArmor
-	 */
-	public boolean[] getIsArmor()
-	{
-		return isArmor;
-	}
-	/**
-	 * @return the isWeapon
-	 */
-	public boolean[] getIsWeapon()
-	{
-		return isWeapon;
-	}
-	/**
-	 * @return the isPuzzle
-	 */
-	public boolean[] getIsPuzzle()
-	{
-		return isPuzzle;
-	}
-	/**
-	 * @return the isEmpty
-	 */
-	public boolean[] getIsEmpty()
-	{
-		return isEmpty;
-	}
-	/**
-	 * @return the choices
-	 */
-	public String[] getChoices()
-	{
-		return choices;
-	}
-	/**
-	 * @param introduction the introduction to set
-	 */
-	public void setIntroduction(String introduction)
-	{
-		this.introduction = introduction;
-	}
-	/**
-	 * @param howToPlay the howToPlay to set
-	 */
-	public void setHowToPlay(String howToPlay)
-	{
-		this.howToPlay = howToPlay;
-	}
-	/**
-	 * @param roomDescription the roomDescription to set
-	 */
-	public void setRoomDescription(String[] roomDescription)
-	{
-		this.roomDescription = roomDescription;
-	}
-	/**
-	 * @param isMonster the isMonster to set
-	 */
-	public void setIsMonster(boolean[] isMonster)
-	{
-		this.isMonster = isMonster;
-	}
-	/**
-	 * @param isElixer the isElixer to set
-	 */
-	public void setIsElixer(boolean[] isElixer)
-	{
-		this.isElixer = isElixer;
-	}
-	/**
-	 * @param isArmor the isArmor to set
-	 */
-	public void setIsArmor(boolean[] isArmor)
-	{
-		this.isArmor = isArmor;
-	}
-	/**
-	 * @param isWeapon the isWeapon to set
-	 */
-	public void setIsWeapon(boolean[] isWeapon)
-	{
-		this.isWeapon = isWeapon;
-	}
-	/**
-	 * @param isPuzzle the isPuzzle to set
-	 */
-	public void setIsPuzzle(boolean[] isPuzzle)
-	{
-		this.isPuzzle = isPuzzle;
-	}
-	/**
-	 * @param isEmpty the isEmpty to set
-	 */
-	public void setIsEmpty(boolean[] isEmpty)
-	{
-		this.isEmpty = isEmpty;
-	}
-	/**
-	 * @param choices the choices to set
-	 */
-	public void setChoices(String[] choices)
-	{
-		this.choices = choices;
-	}
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString()
-	{
-		return "Rooms [introduction=" + introduction + ", howToPlay="
-				+ howToPlay + ", roomDescription="
-				+ Arrays.toString(roomDescription) + ", isMonster="
-				+ Arrays.toString(isMonster) + ", isElixer="
-				+ Arrays.toString(isElixer) + ", isArmor="
-				+ Arrays.toString(isArmor) + ", isWeapon="
-				+ Arrays.toString(isWeapon) + ", isPuzzle="
-				+ Arrays.toString(isPuzzle) + ", isEmpty="
-				+ Arrays.toString(isEmpty) + ", choices="
-				+ Arrays.toString(choices) + "]";
-	}
-	
-	
+    public Rooms()
+    {
+        roomID = new ArrayList<Integer>();;
+        roomDescription =  new ArrayList<String>();
+        isMonster =  new ArrayList<Integer>();
+        isElixir = new ArrayList<Integer>();
+        isArmor =  new ArrayList<Integer>();
+        isWeapon =  new ArrayList<Integer>();
+        isPuzzle =  new ArrayList<Integer>();
+        isEmpty =  new ArrayList<Integer>();
+        choices =  new ArrayList<String[]>();
+    }
 
+    public void addChoices(String[] choices)
+    {
+        this.choices.add(choices);
+    }
+
+    public void addRoomID(Integer roomID)
+    {
+        this.roomID.add(roomID);
+    }
+
+    public void addRoomDescription(String roomDescription)
+    {
+        this.roomDescription.add(roomDescription);
+    }
+
+    public void addIsMonster(Integer isMonster)
+    {
+        this.isMonster.add(isMonster);
+    }
+
+    public void addIsElixir(Integer isElixer)
+    {
+        this.isElixir.add(isElixer);
+    }
+
+    public void addIsArmor(Integer isArmor)
+    {
+        this.isArmor.add(isArmor);
+    }
+
+    public void addIsWeapon(Integer isWeapon)
+    {
+        this.isWeapon.add(isWeapon);
+    }
+
+    public void addIsPuzzle(Integer isPuzzle)
+    {
+        this.isPuzzle.add(isPuzzle);
+    }
+
+    public void addIsEmpty(Integer isEmpty)
+    {
+        this.isEmpty.add(isEmpty);
+    }
+
+    public ArrayList<Integer> getRoomID()
+    {
+        return roomID;
+    }
+
+    public ArrayList<String> getRoomDescription()
+    {
+        return roomDescription;
+    }
+
+    public ArrayList<Integer> getIsMonster()
+    {
+        return isMonster;
+    }
+
+    public ArrayList<Integer> getIsElixir()
+    {
+        return isElixir;
+    }
+
+    public ArrayList<Integer> getIsArmor()
+    {
+        return isArmor;
+    }
+
+    public ArrayList<Integer> getIsWeapon()
+    {
+        return isWeapon;
+    }
+
+    public ArrayList<Integer> getIsPuzzle()
+    {
+        return isPuzzle;
+    }
+
+    public ArrayList<Integer> getIsEmpty()
+    {
+        return isEmpty;
+    }
+
+    public ArrayList<String[]> getChoices()
+    {
+        return choices;
+    }
 }

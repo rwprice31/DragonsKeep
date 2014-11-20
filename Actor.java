@@ -24,27 +24,27 @@ abstract class Actor
         this.attackPower = attackPower;
     }
 
-	protected String getName() {
+    public String getName() {
 		return name;
 	}
 
-	protected void setName(String name) {
+    public void setName(String name) {
 		this.name = name;
 	}
 
-	protected int getHealth() {
+    public int getHealth() {
 		return health;
 	}
 
-	protected void setHealth(int health) {
+    public void setHealth(int health) {
 		this.health = health;
 	}
 
-	protected int getAttackPower() {
+    public int getAttackPower() {
 		return attackPower;
 	}
 
-	protected void setAttackPower(int attackPower) {
+	public void setAttackPower(int attackPower) {
 		this.attackPower = attackPower;
 	}
 	

@@ -22,14 +22,14 @@ public class Puzzle
     private String solution;
     private String successMessage;
 	private String failureMessage;
-    private boolean wonGame;
+    private int wonGame;
 
 	/**
 	 * Method: Constructor for Puzzle class
 	 * Constructor for Puzzle class that contains a String, boolean, String
 	 * String and String as arguments
 	 */
-	public Puzzle(String puzzle, String solution, String successMessage, String failureMessage, boolean wonGame)
+	public Puzzle(String puzzle, String solution, String successMessage, String failureMessage, int wonGame)
 	{
         this.puzzle = puzzle;
         this.solution = solution;
@@ -53,7 +53,7 @@ public class Puzzle
 	 * This method returns true or false if the Puzzle object has been solved
 	 * @return The current boolean of the Puzzle object
 	 */
-	public boolean isWonGame()
+	public int isWonGame()
 	{
 		return wonGame;
 	}
@@ -103,7 +103,7 @@ public class Puzzle
 	 * This method changes the boolean value of the won game value of the Puzzle object
 	 * @param wonGame new won game boolean value of the Puzzle object
 	 */
-	public void setWonGame(boolean wonGame)
+	public void setWonGame(int wonGame)
 	{
 		this.wonGame = wonGame;
 	}
