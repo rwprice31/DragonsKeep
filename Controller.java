@@ -85,8 +85,6 @@ public class Controller
     //creates a user profile
     public static boolean createAccount(String name)
     {
-
-
 //        try
 //        {
 //            //Query the database. Returns the results in a ResultSet

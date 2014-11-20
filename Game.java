@@ -4,7 +4,10 @@ import Controller.Controller;
 import Model.*;
 
 import javax.naming.ldap.Control;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Scanner;
+import java.util.TreeMap;
 
 /**
  * author: JJ Lindsay
@@ -34,6 +37,7 @@ public class Game
     private static String saveHero;
     private static String saveRoomStates;
     private static String saveHeroInventory;
+    private static Map<Integer,Rooms> roomsMap;
 //    private static String sInpute;
 //    private static int iInput;
 
@@ -101,7 +105,7 @@ public class Game
         loadGame();
 
         // First time player enters here
-        enteredRoom(rooms.getRoomID().get(currentRoom));
+        enteredRoom(currentRoom);
 
     }
 
@@ -118,12 +122,12 @@ public class Game
     public static void loadGame()
     {
         String[] allRooms = Controller.loadAllRooms().split("[|]]");
-        rooms = new Rooms();
         String[] temp = new String[4];
+        roomsMap = new TreeMap<Integer, Rooms>();
 
         for (int i = 0; i < allRooms.length-11; i++)
         {
-            rooms.addRoomID(Integer.parseInt(allRooms[i]));
+            rooms = new Rooms();
             temp[0] = allRooms[i+1];
             temp[1] = allRooms[i+2];
             temp[2] = allRooms[i+3];
@@ -136,6 +140,8 @@ public class Game
             rooms.addIsWeapon(Integer.parseInt(allRooms[i+9]));
             rooms.addIsMonster(Integer.parseInt(allRooms[i+10]));
             rooms.addIsPuzzle(Integer.parseInt(allRooms[i+11]));
+
+            roomsMap.put(Integer.parseInt(allRooms[i]), rooms);
         }
         currentRoom = 0;
     }
@@ -143,7 +149,7 @@ public class Game
     public static void battle()
     {
 
-        String[] dbMonster = Controller.retrieveMonster(rooms.getIsMonster().get(currentRoom)).split("[|]]");
+        String[] dbMonster = Controller.retrieveMonster(roomsMap.get(currentRoom).getIsMonster().get(currentRoom)).split("[|]]");
         monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
 
         //is user requesting to check inventory?
@@ -158,19 +164,19 @@ public class Game
 
     public static void collectItem(char itemType)
     {
-        String[] dbArmor = Controller.retrieveArmor(rooms.getIsArmor().get(currentRoom)).split("[|]]");
+        String[] dbArmor = Controller.retrieveArmor(roomsMap.get(currentRoom).getIsArmor().get(currentRoom)).split("[|]]");
         armor = new Armor(dbArmor[0], Integer.parseInt(dbArmor[1]));
 
-        String[] dbElixir = Controller.retrieveElixir(rooms.getIsElixir().get(currentRoom)).split("[|]]");
+        String[] dbElixir = Controller.retrieveElixir(roomsMap.get(currentRoom).getIsElixir().get(currentRoom)).split("[|]]");
         elixir = new Elixir(dbElixir[0], Integer.parseInt(dbElixir[1]));
 
-        String[] dbWeapon = Controller.retrieveWeapon(rooms.getIsWeapon().get(currentRoom)).split("[|]]");
+        String[] dbWeapon = Controller.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon().get(currentRoom)).split("[|]]");
         weapon = new Weapon(dbWeapon[0], Integer.parseInt(dbWeapon[1]));
     }
 
     public static void solvePuzzle()
     {
-        String[] dbPuzzle = Controller.retrievePuzzle(rooms.getIsPuzzle().get(currentRoom)).split("[|]]");
+        String[] dbPuzzle = Controller.retrievePuzzle(roomsMap.get(currentRoom).getIsPuzzle().get(currentRoom)).split("[|]]");
         puzzle = new Puzzle(dbPuzzle[0], dbPuzzle[1], dbPuzzle[2], dbPuzzle[3], Integer.parseInt(dbPuzzle[4]));
 
         System.out.println(puzzle.getPuzzle());
@@ -191,28 +197,28 @@ public class Game
         System.out.println(rooms.getRoomDescription().get(roomNum));
         String response = input.nextLine();
 
-        if (response.equalsIgnoreCase("head NORTH") && rooms.getChoices().get(roomNum)[0] != null)
+        if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices().get(roomNum)[0] != null)
         {
-            enteredRoom(Integer.parseInt(rooms.getChoices().get(roomNum)[0]));
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[0]));
         }
-        else if (response.equalsIgnoreCase("head NORTH") && rooms.getChoices().get(roomNum)[1] != null)
+        else if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices().get(roomNum)[1] != null)
         {
-            enteredRoom(Integer.parseInt(rooms.getChoices().get(roomNum)[1]));
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[1]));
         }
-        else if (response.equalsIgnoreCase("head South") && rooms.getChoices().get(roomNum)[2] != null)
+        else if (response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices().get(roomNum)[2] != null)
         {
-            enteredRoom(Integer.parseInt(rooms.getChoices().get(roomNum)[2]));
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[2]));
         }
-        else if (response.equalsIgnoreCase("head West") && rooms.getChoices().get(roomNum)[3] != null)
+        else if (response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices().get(roomNum)[3] != null)
         {
-            enteredRoom(Integer.parseInt(rooms.getChoices().get(roomNum)[3]));
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[3]));
 
         }
-        else if (rooms.getIsMonster().get(currentRoom) != null)
+        else if (roomsMap.get(currentRoom).getIsMonster().get(currentRoom) != null)
         {
             battle();
         }
-        else if (rooms.getIsPuzzle().get(currentRoom) != null)
+        else if (roomsMap.get(currentRoom).getIsPuzzle().get(currentRoom) != null)
         {
             solvePuzzle();
         }

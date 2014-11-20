@@ -24,7 +24,7 @@ public class Rooms
 {
 	private String introduction;
 	private String howToPlay;
-    private ArrayList<Integer> roomID;
+    //private ArrayList<Integer> roomID;
     private ArrayList<String>  roomDescription;
 	private ArrayList<Integer> isMonster;
 	private ArrayList<Integer> isElixir;
@@ -38,7 +38,7 @@ public class Rooms
 
     public Rooms()
     {
-        roomID = new ArrayList<Integer>();;
+        //roomID = new ArrayList<Integer>();;
         roomDescription =  new ArrayList<String>();
         isMonster =  new ArrayList<Integer>();
         isElixir = new ArrayList<Integer>();
@@ -54,10 +54,10 @@ public class Rooms
         this.choices.add(choices);
     }
 
-    public void addRoomID(Integer roomID)
-    {
-        this.roomID.add(roomID);
-    }
+//    public void addRoomID(Integer roomID)
+//    {
+//        this.roomID.add(roomID);
+//    }
 
     public void addRoomDescription(String roomDescription)
     {
@@ -94,10 +94,10 @@ public class Rooms
         this.isEmpty.add(isEmpty);
     }
 
-    public ArrayList<Integer> getRoomID()
-    {
-        return roomID;
-    }
+//    public ArrayList<Integer> getRoomID()
+//    {
+//        return roomID;
+//    }
 
     public ArrayList<String> getRoomDescription()
     {
