@@ -37,7 +37,7 @@ public class Game
     private static String saveHero;
     private static String saveRoomStates;
     private static String saveHeroInventory;
-    private static Map<Integer,Rooms> roomsMap;
+    private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
 //    private static String sInpute;
 //    private static int iInput;
 
@@ -56,6 +56,7 @@ public class Game
     public static boolean login()
     {
         System.out.println("Enter your user name: ");
+        input.nextLine(); //necessary since the previous use was for reading an int UNTESTED!!!
         String name = input.nextLine();
         return Controller.loginAccount(name);
 
@@ -148,30 +149,94 @@ public class Game
 
     public static void battle()
     {
-
+        //create monster
         String[] dbMonster = Controller.retrieveMonster(roomsMap.get(currentRoom).getIsMonster().get(currentRoom)).split("[|]]");
         monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
 
-        //is user requesting to check inventory?
-        //is user equiping anything?
-        if (monster.getHealth() - player.getAttackPower() > 0)
-        {
-            monster.setHealth(monster.getHealth() - player.getAttackPower());
-        }
+        //LOOP THIS
+        System.out.println("Enter \"inventory\" to check inventory. \n Enter \"equip -item name-\" to equip a specific item in inventory. " +
+                "\n Enter \"attack\" to start the fight.");
+        String response = input.nextLine();
 
+        if (response.equalsIgnoreCase("inventory"))
+        {
+            player.getInventory().view();
+        }
+        else if (response.substring(0, 5).equalsIgnoreCase("equip"))
+        {
+            //check that item exits
+            if (player.getInventory().getItem(response.substring(6)) != null)
+            {
+                if (player.getInventory().getItemType(response) == 'w')
+                {
+                    player.setAttackPower(((Weapon) player.getInventory().getItem(response.substring(6))).getStrength());
+                }
+                else if (player.getInventory().getItemType(response) == 'a')
+                {
+                    player.setDefenseStrength(((Armor) player.getInventory().getItem(response.substring(6))).getArmorDefense());
+                }
+                else if (player.getInventory().getItemType(response) == 'e')
+                {
+                    player.setHealth(((Elixir) player.getInventory().getItem(response.substring(6))).getHealthBoost());
+                }
+            }
+            {
+                System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+            }
+
+        }
+        else if (response.equalsIgnoreCase("attack"))
+        {
+            //LOOP this
+            //player attacks first
+            if (monster.getHealth() - player.getAttackPower() > 0)
+            {
+                monster.setHealth(monster.getHealth() - player.getAttackPower());
+            } else
+            {
+                //temporary phrase
+                System.out.println("Hurray! You killed the monster.");
+            }
+
+            //Monster retaliates
+            System.out.println("You weren't able to strike the monster down with your last attack. It looks angry!\nBrace yourself.");
+            if (player.getHealth() - monster.getAttackPower() > 0)
+            {
+                player.setHealth(player.getHealth() - monster.getAttackPower());
+            } else
+            {
+                //temporary phrase
+                System.out.println("Oh no!! You were killed by the monster!");
+            }
+        }
+        else
+        {
+            System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+        }
 
     }
 
-    public static void collectItem(char itemType)
+    public static void collectItem()
     {
-        String[] dbArmor = Controller.retrieveArmor(roomsMap.get(currentRoom).getIsArmor().get(currentRoom)).split("[|]]");
-        armor = new Armor(dbArmor[0], Integer.parseInt(dbArmor[1]));
+        if (roomsMap.get(currentRoom).getIsArmor().get(currentRoom) != null)
+        {
+            String[] dbArmor = Controller.retrieveArmor(roomsMap.get(currentRoom).getIsArmor().get(currentRoom)).split("[|]]");
+            armor = new Armor(dbArmor[0], Integer.parseInt(dbArmor[1]));
+//Start here 11/20/14            //place item in player inventory
+        }
+        else if (roomsMap.get(currentRoom).getIsElixir().get(currentRoom) != null)
+        {
+            String[] dbElixir = Controller.retrieveElixir(roomsMap.get(currentRoom).getIsElixir().get(currentRoom)).split("[|]]");
+            elixir = new Elixir(dbElixir[0], Integer.parseInt(dbElixir[1]));
+//Start here 11/20/14            //place item in player inventory
+        }
+        else if (roomsMap.get(currentRoom).getIsWeapon().get(currentRoom) != null)
+        {
+            String[] dbWeapon = Controller.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon().get(currentRoom)).split("[|]]");
+            weapon = new Weapon(dbWeapon[0], Integer.parseInt(dbWeapon[1]));
+//Start here 11/20/14            //place item in player inventory
 
-        String[] dbElixir = Controller.retrieveElixir(roomsMap.get(currentRoom).getIsElixir().get(currentRoom)).split("[|]]");
-        elixir = new Elixir(dbElixir[0], Integer.parseInt(dbElixir[1]));
-
-        String[] dbWeapon = Controller.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon().get(currentRoom)).split("[|]]");
-        weapon = new Weapon(dbWeapon[0], Integer.parseInt(dbWeapon[1]));
+        }
     }
 
     public static void solvePuzzle()
@@ -192,35 +257,93 @@ public class Game
         }
     }
 
+    //should there be a change rooms method since its repeated otherwise?
+    public static void changeRooms()
+    {
+        System.out.println("Where would you like to go next?");
+        String response = input.nextLine();
+
+        if (response.equalsIgnoreCase("head East") && roomsMap.get(currentRoom).getChoices().get(currentRoom)[0] != null)
+        {
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(currentRoom)[0]));
+        }
+        else if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices().get(currentRoom)[1] != null)
+        {
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(currentRoom)[1]));
+        }
+        else if (response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices().get(currentRoom)[2] != null)
+        {
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(currentRoom)[2]));
+        }
+        else if (response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices().get(currentRoom)[3] != null)
+        {
+            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(currentRoom)[3]));
+
+        }
+    }
+
     public static void enteredRoom(int roomNum)
     {
         System.out.println(rooms.getRoomDescription().get(roomNum));
-        String response = input.nextLine();
+        String response;
 
-        if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices().get(roomNum)[0] != null)
+        //checks if an monster is in the room
+        if (roomsMap.get(currentRoom).getIsMonster().get(currentRoom) != null)
         {
-            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[0]));
-        }
-        else if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices().get(roomNum)[1] != null)
-        {
-            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[1]));
-        }
-        else if (response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices().get(roomNum)[2] != null)
-        {
-            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[2]));
-        }
-        else if (response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices().get(roomNum)[3] != null)
-        {
-            enteredRoom(Integer.parseInt(roomsMap.get(currentRoom).getChoices().get(roomNum)[3]));
+            System.out.println("Are you going to fight the monster? (yes/no)");
+            response = input.nextLine();
 
+            if (response.equalsIgnoreCase("yes"))
+            {
+                battle();
+            }
+            if (response.equalsIgnoreCase("no"))
+            {
+                changeRooms();
+            }
+            else
+            {
+                System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+            }
         }
-        else if (roomsMap.get(currentRoom).getIsMonster().get(currentRoom) != null)
-        {
-            battle();
-        }
+        //checks if an puzzle is in the room
         else if (roomsMap.get(currentRoom).getIsPuzzle().get(currentRoom) != null)
         {
-            solvePuzzle();
+            System.out.println("Are you going to attempt this puzzle? (yes/no)");
+            response = input.nextLine();
+
+            if (response.equalsIgnoreCase("yes"))
+            {
+                solvePuzzle();
+            }
+            if (response.equalsIgnoreCase("no"))
+            {
+                changeRooms();
+            }
+            else
+            {
+                System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+            }
+        }
+        //checks if an item is in the room
+        else if (roomsMap.get(currentRoom).getIsArmor().get(currentRoom) != null || roomsMap.get(currentRoom).getIsWeapon().get(currentRoom) != null ||
+                roomsMap.get(currentRoom).getIsElixir().get(currentRoom) != null)
+        {
+            System.out.println("Do you want to collect this item? (yes/no)");
+            response = input.nextLine();
+
+            if (response.equalsIgnoreCase("yes"))
+            {
+                collectItem();
+            }
+            if (response.equalsIgnoreCase("no"))
+            {
+                changeRooms();
+            }
+            else
+            {
+                System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+            }
         }
 
     }
@@ -233,6 +356,8 @@ public class Game
 
     public static void main(String[] args)
     {
+//DEBUG PURPOSE        String word = new String("equip1sword");
+//DEBUG PURPOSE        System.out.println("Your word is equip sword before substring. After: " + word.substring(6));
         playGame();
     }
 }
