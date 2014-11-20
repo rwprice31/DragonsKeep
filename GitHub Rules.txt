@@ -1,0 +1,23 @@
+RULES for using GitHub with everyone else
+-----------------------------------------
+
+1. NEVER use DEVELOP!!
+
+2. Before you begin to work:
+   a) Enter preDevelop and branch/fork off of it to create (example) "ThaoRev1", "JNrev4", "EvertonRev1", etc
+   b) work within newly created branch
+
+3  Atleast once a day merge with preDevelop:
+	a) (In nameRev# branch) export .db file to txt file
+	b) (In nameRev# branch) delete .db file
+	c) (In nameRev# branch) run the merge command [NOTE: you may/may not have to delete .db file in preDevelop]
+
+4 If merging was successful, enter preDevelop and bring over your exported db:
+	a) (In preDevelop branch) If an exported db text file already exist, delete it.
+	b) (In preDevelop branch) delete the .db file
+	c) (In preDevelop branch) import only your db text file.
+	d) (In preDevelop branch) verify your work by importing your text file into SQLite3 and create a .db file.
+
+5. Repeat step 2-4 increasing nameRev# by 1 in step 2
+	a) (example) ThaoRev1 --> ThaoRev2...etc
+
