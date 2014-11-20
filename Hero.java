@@ -32,19 +32,19 @@ public class Hero extends Actor
 		return inventory;
 	}
 
-	protected int getScore() {
+    public int getScore() {
 		return score;
 	}
 
-	protected void setScore(int score) {
+    public void setScore(int score) {
 		this.score = score;
 	}
 
-	protected int getDefenseStrength() {
+    public int getDefenseStrength() {
 		return defenseStrength;
 	}
 
-	protected void setDefenseStrength(int defenseStrength) {
+    public void setDefenseStrength(int defenseStrength) {
 		this.defenseStrength = defenseStrength;
 	}
 }
