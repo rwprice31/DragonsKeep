@@ -3,7 +3,8 @@ package Model;
 public class Hero extends Actor
 {
 
-	private Inventory inventory;
+    private int playerID;
+    private Inventory inventory;
 	private int score;
 	private int defenseStrength;
 
@@ -16,9 +17,10 @@ public class Hero extends Actor
 	}
 	
 	//call Hero from playerFile table
-	public Hero(String name, int score, int health) {
+	public Hero(int playerID, String name, int score, int health) {
 		super(name, health);
-		this.score = score;
+		this.playerID = playerID;
+        this.score = score;
         inventory = null;  //create inventory will update this.
 	}
 	
@@ -47,4 +49,14 @@ public class Hero extends Actor
     public void setDefenseStrength(int defenseStrength) {
 		this.defenseStrength = defenseStrength;
 	}
+
+    public int getPlayerID()
+    {
+        return playerID;
+    }
+
+    public void setPlayerID(int playerID)
+    {
+        this.playerID = playerID;
+    }
 }

@@ -60,7 +60,7 @@ public class Controller
         }
     }
     
-    //verifies the user account exists
+    //verifies the user account
     public static boolean loginAccount(String playerName)
     {
         try
@@ -71,20 +71,24 @@ public class Controller
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
-                if (playerName.equalsIgnoreCase(rs.getString("name"))){return true;}
+                if (playerName.equalsIgnoreCase(rs.getString("name")))
+                {
+                    return true;
+                }
             }
-            return false;
         }
         catch(SQLException sqe)
         {
             System.out.println(sqe.getMessage());
         }
-        return true;
+        return false;
     }
 
     //creates a user profile
     public static boolean createAccount(String name)
     {
+//DEBUG PURPOSE -----------------------------------------------------
+//Running this code successfully separate from the rest of the createAccount() code confirms a connection to the database
 //        try
 //        {
 //            //Query the database. Returns the results in a ResultSet
@@ -105,6 +109,8 @@ public class Controller
 //      ---------------------------------------------------------
         //while (duplicateKey)
         //{
+        //BEFORE inserting:: compare user requested name against names already in the db
+
             boolean err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
                     "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
 
@@ -162,6 +168,36 @@ public class Controller
     }
 
     //retrieves all the rooms
+    public static String loadSavedRooms(int playerID)
+    {
+        StringBuilder savedRoomBuilder = new StringBuilder();
+
+        try
+        {
+            //Query the database. Returns the results in a ResultSet
+            rs = tdb.query(tdb, "Select * from emptyPlayerRooms WHERE playerID = " + playerID + " ");
+            //Loop over the result set. next moves the cursor to the next record and returns the current record
+            while(rs.next())
+            {
+                savedRoomBuilder.append(rs.getInt("playerID"));
+                savedRoomBuilder.append(rs.getInt("currentRoom"));
+
+                //add saved rooms 1 - 50
+                for (int x = 1; x <= 50; x++)
+                {
+                    savedRoomBuilder.append("|");
+                    savedRoomBuilder.append(rs.getInt("room" + x + ""));
+                }
+            }
+        }
+        catch(SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
+        }
+        return savedRoomBuilder.toString();
+    }
+
+    //retrieves all the rooms
     public static String loadAllRooms()
     {
         StringBuilder roomBuilder = new StringBuilder();
@@ -209,7 +245,7 @@ public class Controller
     }
 
     //(1/2) this is called first from Game class. loads the player profile after loginAccount returns true
-    public static String loadHero()
+    public static String loadHero(String playerName)
     {
         StringBuilder heroBuilder = new StringBuilder();
 
@@ -220,16 +256,19 @@ public class Controller
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
-                heroBuilder.append(rs.getInt("playerID"));
-                heroBuilder.append("|");
-                heroBuilder.append(rs.getString("name"));
-                heroBuilder.append("|");
-                heroBuilder.append(rs.getInt("hasInventory"));
-                heroBuilder.append("|");
-                heroBuilder.append(rs.getInt("score"));
-                heroBuilder.append("|");
-                heroBuilder.append(rs.getInt("health"));
-                heroBuilder.append("|");
+                if (playerName.equalsIgnoreCase(rs.getString("name")))
+                {
+                    heroBuilder.append(rs.getInt("playerID"));
+                    heroBuilder.append("|");
+                    heroBuilder.append(rs.getString("name"));
+                    heroBuilder.append("|");
+                    heroBuilder.append(rs.getInt("hasInventory"));
+                    heroBuilder.append("|");
+                    heroBuilder.append(rs.getInt("score"));
+                    heroBuilder.append("|");
+                    heroBuilder.append(rs.getInt("health"));
+                    heroBuilder.append("|");
+                }
             }
         }
         catch(SQLException sqe)
