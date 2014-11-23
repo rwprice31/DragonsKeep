@@ -9,11 +9,12 @@ public class Hero extends Actor
 	private int defenseStrength;
 
 	//create a new Hero/player for the first time
-	public Hero(String name) {
+	public Hero(String name, int playerID) {
 		super(name);
 		score = 0;
 		defenseStrength = 0;
         inventory = null;
+        this.playerID = playerID;
 	}
 	
 	//call Hero from playerFile table
