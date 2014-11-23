@@ -131,8 +131,11 @@ public class Controller
     {
         while (duplicateKey)
         {
-            boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, puzzle, answer, successMessage, failureMessage, isSolved) " +
-                    "values (" + key + ", \'" + puzzle + "\',\'" + answer + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
+//            boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, puzzle, answer, successMessage, failureMessage, isSolved) " +
+//                    "values (" + key + ", \'" + puzzle + "\',\'" + answer + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
+        	//fix: changed the name of some columns to match with the database 
+        	boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
+                    "values (" + key + ", \'" + problem + "\',\'" + solution + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
 
             if (err)
             {
@@ -205,7 +208,8 @@ public class Controller
         try
         {
             //Query the database. Returns the results in a ResultSet
-            rs = tdb.query(tdb, "Select * from rooms");
+            //simple fix: change rooms to room column
+            rs = tdb.query(tdb, "Select * from room"); 
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
