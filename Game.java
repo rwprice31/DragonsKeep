@@ -159,6 +159,22 @@ public class Game
     //This may be optional
     public static void quitGame()
     {
+    	System.out.println("Do you want to save your game before closing? (yes/no)");
+    	String in = input.nextLine();
+    	if(in.equalsIgnoreCase("yes"))
+    	{
+    		saveGame();
+    		System.exit(0);
+    	}
+    	else if(in.equalsIgnoreCase("no"))
+    	{
+    		System.exit(0);
+    	}
+    	else
+    	{
+    		System.out.println("Error interpreting your last request.");
+    		quitGame();
+    	}
 
     }
 
