@@ -113,12 +113,13 @@ public class Controller
     }
 
     //creates a new puzzle
-    public static boolean createPuzzle(String puzzle, String answer, String successMessage, String failureMessage, int isSolved)
+    public static boolean createPuzzle(String problem, String solution, String successMessage, String failureMessage, int isSolved)
     {
         while (duplicateKey)
         {
-            int err = tdb.modData(tdb, "Insert into puzzle(puzzleID, puzzle, answer, successMessage, failureMessage, isSolved) " +
-                    "values (" + key + ", \'" + puzzle + "\',\'" + answer + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
+	    //fix: changed the name of some columns to match with the database
+            int err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
+                    "values (" + key + ", \'" + problem + "\',\'" + solution + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
 
             if (err == 0)
             {
@@ -190,7 +191,10 @@ public class Controller
         try
         {
             //Query the database. Returns the results in a ResultSet
-            rs = tdb.query(tdb, "Select * from room");
+
+            //simple fix: change rooms to room column
+            rs = tdb.query(tdb, "Select * from room"); 
+
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -459,7 +463,7 @@ public class Controller
         return true;
     }
 
-    // UNFINISHED!!!!!!!!!!--------------------------------------NO TABLE EXISTS YET!!!
+    // UNFINISHED!!!!!!!!!!--------------------------------------Needs a lot of work!!!
     //save the rooms state to the savedRooms table
     //array should have key, playerID, and 1-50 rooms 0 or 1 for false/true is the room empty
     public static Boolean saveRoomState(String[] roomsState)
@@ -481,7 +485,7 @@ public class Controller
         while (duplicateKey)
         {
             //Need to create a savedRooms table
-            int err = tdb.modData(tdb, "Insert into Rooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
+            int err = tdb.modData(tdb, "Insert into emptyPlayerRooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
                     //"values (" + key + ", " + playerID + ", " + attackPower + ", " + health + ")");
 
             if (err == 0)
