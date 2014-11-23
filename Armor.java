@@ -37,7 +37,7 @@ public class Armor extends Item
 	 * This method gets the current health boost of the Armor object
 	 * @return the current health boost of the current health boost of the Armor object
 	 */
-	public int getHealthBoost()
+	public int getArmorDefense()
 	{
 		return armorDefense;
 	}
@@ -47,7 +47,7 @@ public class Armor extends Item
 	 * This method changes the current health boost of the Armor object
 	 * @param armorDefense new armor Defense of the Armor object
 	 */
-	public void setHealthBoost(int armorDefense)
+	public void setArmorDefense(int armorDefense)
 	{
 		this.armorDefense = armorDefense;
 	}
