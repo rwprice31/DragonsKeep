@@ -151,10 +151,12 @@ public class Game
                 System.err.println("Error interpreting your last request.");
             }
         }
-        loadGame();
+//DEBUG PURPOSE         loadGame();
 
         // First time player enters here
+
         enteredRoom();
+
 
     }
 
@@ -184,6 +186,7 @@ public class Game
             temp[2] = allRooms[i+3];
             temp[3] = allRooms[i+4];
             rooms.setChoices(temp);
+
             rooms.setRoomDescription(allRooms[i + 5]);  //THIS WOULD CHANGE FOR LOGIN
             rooms.setIsEmpty(Integer.parseInt(allRooms[i + 6]));  //THIS WOULD CHANGE FOR LOGIN
             rooms.setIsArmor(Integer.parseInt(allRooms[i + 7])); //points to the specific armor
@@ -193,6 +196,7 @@ public class Game
             rooms.setIsPuzzle(Integer.parseInt(allRooms[i + 11])); //points to the specific puzzle
 
             currentRoom = 0;
+
 
             //converts roomID from string to int and stores roomID as key and the room created in a map
             roomsMap.put(Integer.parseInt(allRooms[i]), rooms);
@@ -232,11 +236,13 @@ public class Game
         monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
 
         //LOOP THIS for? while? do while?
+
 //        do
 //        {
             System.out.println("Enter \"inventory\" to check inventory. \n Enter \"equip item name\" to equip a specific item in inventory. " +
                     "\n Enter \"attack\" to start the fight.");
             String response = input.nextLine();
+
 
             if (response.equalsIgnoreCase("inventory"))
             {
@@ -291,6 +297,7 @@ public class Game
             {
                 System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
             }
+
 //        }while();
 
 
@@ -301,10 +308,12 @@ public class Game
         if (roomsMap.get(currentRoom).getIsMonster() == 0 && roomsMap.get(currentRoom).getIsPuzzle() == 0 &&
             roomsMap.get(currentRoom).getIsArmor() == 0 && roomsMap.get(currentRoom).getIsWeapon() == 0 &&
             roomsMap.get(currentRoom).getIsElixir() == 0)
+
         {
             roomsMap.get(currentRoom).setIsEmpty(1);
             roomsMap.get(currentRoom).setRoomDescription("This room is empty... and it looks a bit familiar");
         }
+
     }
 
     public static void collectItem()
@@ -354,10 +363,12 @@ public class Game
         Boolean repeatPuzzle = false;
 
         //Loop
+
         do
         {
             System.out.println(puzzle.getPuzzle());
             String response = input.nextLine();
+
 
             if (puzzle.getSolution().equalsIgnoreCase(response))
             {
@@ -402,36 +413,43 @@ public class Game
         Boolean loop;
         //LOOP THIS
         do
+
         {
             System.out.println("Where would you like to go next?");
             String response = input.nextLine();
 
             if (response.equalsIgnoreCase("head East") && roomsMap.get(currentRoom).getChoices()[0] != null)
             {
+
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]);
                 loop = false;
                 enteredRoom();
             } else if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices()[1] != null)
+
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[1]);
                 loop = false;
                 enteredRoom();
             } else if (response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices()[2] != null)
             {
+
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[2]);
                 loop = false;
                 enteredRoom();
             } else if (response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices()[3] != null)
+
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[3]);
                 loop = false;
                 enteredRoom();
             }
+
             // if the user correctly enters a direction but there is no room in that direction.
             else if (response.equalsIgnoreCase("head East") && roomsMap.get(currentRoom).getChoices()[0] == null ||
                     response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices()[1] == null ||
                     response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices()[2] == null ||
                     response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices()[3] == null)
+
             {
                 System.err.println("This is embarrassing. You entered: " + response + " and walked into a wall. There is no door that way. Try again.");
                 loop = true;
@@ -442,6 +460,7 @@ public class Game
                 System.err.println("There was an error in trying to make sense of you request. Check your spelling and try again.");
                 loop = true;
             }
+
         } while(loop);
     }
 
@@ -460,6 +479,7 @@ public class Game
             {
                 System.out.println("Are you going to fight the monster? (yes/no)");
                 response = input.nextLine();
+
 
                 if (response.equalsIgnoreCase("yes"))
                 {
@@ -495,9 +515,11 @@ public class Game
                     System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
                 }
             }
+
             //checks if an item is in the room
             else if (roomsMap.get(currentRoom).getIsArmor() > 0 || roomsMap.get(currentRoom).getIsWeapon() > 0 ||
                     roomsMap.get(currentRoom).getIsElixir() > 0)
+
             {
                 System.out.println("There is an item to collect. Do you want to collect it? (yes/no)");
                 response = input.nextLine();
@@ -523,7 +545,9 @@ public class Game
                 emptyRoom();
                 changeRooms();
             }
+
         }while(loop);
+
     }
 
     // optional

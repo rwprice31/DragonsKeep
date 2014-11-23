@@ -115,14 +115,33 @@ public class Controller
                     "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
 
             if (err)
+
             {
-                key++;
-                //throw ends the process!
-                //throw new AssertionError("Entered duplicate key in db");
+                System.out.println("The monster ID is " + rs.getInt("monsterID"));
+                System.out.println("The monster name is " + rs.getString("name"));
+                System.out.println("The monster attackPower " + rs.getInt("attackPower"));
+                System.out.println("the monster health " + rs.getInt("health") + "\n");
             }
-            else
-                duplicateKey = false;
-       // }
+        }
+        catch(SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
+        }
+//      ---------------------------------------------------------
+//        //while (duplicateKey)
+//        //{
+//            boolean err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
+//                    "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
+//
+//            if (err)
+//            {
+//                key++;
+//                //throw ends the process!
+//                //throw new AssertionError("Entered duplicate key in db");
+//            }
+//            else
+//                duplicateKey = false;
+//       // }
         return true;
     }
 
