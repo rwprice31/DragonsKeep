@@ -159,6 +159,7 @@ public class Game
         // First time player enters here
         enteredRoom();
 
+
     }
 
     //This may be optional
@@ -191,7 +192,7 @@ public class Game
     //Not complete!!!
     public static void loadGame()
     {
-        System.out.println("Entering\nload\ngame!");  //Debug Purposes
+//        System.out.println("Entering\nload\ngame!");  //Debug Purposes
 
         String[] allRooms = Controller.loadAllRooms().split("[|]");
         String[] temp = new String[4];
@@ -208,8 +209,6 @@ public class Game
             temp[2] = allRooms[i+3];
             temp[3] = allRooms[i+4];
             rooms.setChoices(temp);
-
-//            System.out.println(WordUtils.wrap(allRooms[i + 5], 150));  //DEBUG PURPOSES
 
             rooms.setRoomDescription(allRooms[i + 5]);  //THIS WOULD CHANGE FOR LOGIN
             rooms.setIsEmpty(Integer.parseInt(allRooms[i + 6]));  //THIS WOULD CHANGE FOR LOGIN
@@ -428,39 +427,45 @@ public class Game
     //Question for the Team:: should there be a change rooms method since its repeated in several classes?
     public static void changeRooms()
     {
-        Boolean loop;
+        for (int check = 0; check <= 4; check++)
+        {
+            System.out.println(roomsMap.get(currentRoom).getChoices()[check]);
+        }
+//            System.out.println();
+            Boolean loop;
+
         //LOOP THIS
         do
         {
             System.out.println("Where would you like to go next?");
             String response = input.nextLine();
 
-            if (response.equalsIgnoreCase("head East") && roomsMap.get(currentRoom).getChoices()[0] != null)
+            if (response.equalsIgnoreCase("head East") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]) == 0)
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]);
                 loop = false;
                 enteredRoom();
-            } else if (response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices()[1] != null)
+            } else if (response.equalsIgnoreCase("head NORTH") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[1]) == 0)
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[1]);
                 loop = false;
                 enteredRoom();
-            } else if (response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices()[2] != null)
+            } else if (response.equalsIgnoreCase("head South") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[2]) == 0)
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[2]);
                 loop = false;
                 enteredRoom();
-            } else if (response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices()[3] != null)
+            } else if (response.equalsIgnoreCase("head West") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[3]) == 0)
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[3]);
                 loop = false;
                 enteredRoom();
             }
             // if the user correctly enters a direction but there is no room in that direction.
-            else if (response.equalsIgnoreCase("head East") && roomsMap.get(currentRoom).getChoices()[0] == null ||
-                    response.equalsIgnoreCase("head NORTH") && roomsMap.get(currentRoom).getChoices()[1] == null ||
-                    response.equalsIgnoreCase("head South") && roomsMap.get(currentRoom).getChoices()[2] == null ||
-                    response.equalsIgnoreCase("head West") && roomsMap.get(currentRoom).getChoices()[3] == null)
+            else if (response.equalsIgnoreCase("head East") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]) == 0 ||
+                    response.equalsIgnoreCase("head NORTH") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[1]) == 0 ||
+                    response.equalsIgnoreCase("head South") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[2]) == 0 ||
+                    response.equalsIgnoreCase("head West") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[3]) == 0)
             {
                 System.err.println("This is embarrassing. You entered: " + response + " and walked into a wall. There is no door that way. Try again.");
                 loop = true;
@@ -595,5 +600,19 @@ public class Game
 //DEBUG PURPOSE        String word = new String("equip1sword");
 //DEBUG PURPOSE        System.out.println("Your word is equip sword before substring. After: " + word.substring(6));
         playGame();
+//        String name = "Abc\nBCD\nEfG";
+//        String[] tempName = name.split("[\n]");
+//        System.out.println(tempName[0]);
+//        System.out.println(tempName[1]);
+//        System.out.println(tempName[2]);
+
+//        StringBuilder returned = new StringBuilder();
+//        returned.append(tempName[0]);
+//        returned.append("\n");
+//        returned.append(tempName[1]);
+//        returned.append("\n");
+//        returned.append(tempName[2]);
+//
+//        System.out.println(returned);
     }
 }

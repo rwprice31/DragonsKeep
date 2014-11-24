@@ -89,12 +89,12 @@ public class Controller
     {
         do{
         //BEFORE inserting:: compare user requested name against names already in the db
-            System.out.println("Starting key is: " + key);  //DEBUG PURPOSES
+//            System.out.println("Starting key is: " + key);  //DEBUG PURPOSES
 
             //the value returned is the number of effected rows (for us its either 0 or 1)
             int err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
                     "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
-            System.out.println("err is: " + err);
+            //System.out.println("err is: " + err); //DEBUG PURPOSES
 
             //enters here when duplicate id are used
             //i.e. 0 rows were effected
@@ -105,7 +105,7 @@ public class Controller
             }
             else
             {
-                System.out.println("Set duplicateKey to false ");
+                //System.out.println("Set duplicateKey to false ");  //DEBUG PURPOSES
                 duplicateKey = false;
             }
        }while (duplicateKey);
@@ -186,7 +186,7 @@ public class Controller
     public static String loadAllRooms()
     {
         StringBuilder roomBuilder = new StringBuilder();
-        int num = 0;
+//        int num = 0;
 
         try
         {
@@ -208,7 +208,18 @@ public class Controller
                 roomBuilder.append("|");
                 roomBuilder.append(rs.getInt("roomW"));
                 roomBuilder.append("|");
-                roomBuilder.append(rs.getString("description"));
+//                roomBuilder.append(rs.getString("description"));
+
+                //formats the description with new lines
+                String[] temp = rs.getString("description").split("[+]");
+                String str = temp[0];
+                for (int u = 1; u < temp.length; u++)
+                {
+                    str += "\n" + temp[u];
+                }
+                roomBuilder.append(str);
+
+
                 roomBuilder.append("|");
                 roomBuilder.append(rs.getInt("isEmpty"));
                 roomBuilder.append("|");
