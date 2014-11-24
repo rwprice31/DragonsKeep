@@ -85,63 +85,45 @@ public class Controller
     }
 
     //creates a user profile
-    public static boolean createAccount(String name)
+    public static int createAccount(String name)
     {
-//DEBUG PURPOSE -----------------------------------------------------
-//Running this code successfully separate from the rest of the createAccount() code confirms a connection to the database
-//        try
-//        {
-//            //Query the database. Returns the results in a ResultSet
-//            ResultSet rs = tdb.query(tdb, "Select * from monster");
-//            //Loop over the result set. next moves the cursor to the next record and returns the current record
-//            while(rs.next())
-//            {
-//                System.out.println("The monster ID is " + rs.getInt("monsterID"));
-//                System.out.println("The monster name is " + rs.getString("name"));
-//                System.out.println("The monster attackPower " + rs.getInt("attackPower"));
-//                System.out.println("the monster health " + rs.getInt("health") + "\n");
-//            }
-//        }
-//        catch(SQLException sqe)
-//        {
-//            System.out.println(sqe.getMessage());
-//        }
-//      ---------------------------------------------------------
-        //while (duplicateKey)
-        //{
+        do{
         //BEFORE inserting:: compare user requested name against names already in the db
+            System.out.println("Starting key is: " + key);  //DEBUG PURPOSES
 
-            boolean err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
+            //the value returned is the number of effected rows (for us its either 0 or 1)
+            int err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
                     "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
+            System.out.println("err is: " + err);
 
-            if (err)
+            //enters here when duplicate id are used
+            //i.e. 0 rows were effected
+            if (err == 0)
             {
+//                System.out.println("The key is: " + key);  //DEBUG PURPOSES
                 key++;
-                //throw ends the process!
-                //throw new AssertionError("Entered duplicate key in db");
             }
             else
+            {
+                System.out.println("Set duplicateKey to false ");
                 duplicateKey = false;
-       // }
-        return true;
+            }
+       }while (duplicateKey);
+        return key;
     }
 
     //creates a new puzzle
-    public static boolean createPuzzle(String puzzle, String answer, String successMessage, String failureMessage, int isSolved)
+    public static boolean createPuzzle(String problem, String solution, String successMessage, String failureMessage, int isSolved)
     {
         while (duplicateKey)
         {
-//            boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, puzzle, answer, successMessage, failureMessage, isSolved) " +
-//                    "values (" + key + ", \'" + puzzle + "\',\'" + answer + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
-        	//fix: changed the name of some columns to match with the database 
-        	boolean err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
+	    //fix: changed the name of some columns to match with the database
+            int err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
                     "values (" + key + ", \'" + problem + "\',\'" + solution + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
 
-            if (err)
+            if (err == 0)
             {
                 key++;
-                //throw ends the process!
-                //throw new AssertionError("Entered duplicate key in db");
             }
             else
                 duplicateKey = false;
@@ -155,10 +137,10 @@ public class Controller
     {
         while (duplicateKey)
         {
-            boolean err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
+            int err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
                     "values (" + key + ", \'" + name + "\'," + attackPower + "," + health + ")");
 
-            if (err)
+            if (err == 0)
             {
                 key++;
                 //throw ends the process!
@@ -204,12 +186,15 @@ public class Controller
     public static String loadAllRooms()
     {
         StringBuilder roomBuilder = new StringBuilder();
+        int num = 0;
 
         try
         {
             //Query the database. Returns the results in a ResultSet
+
             //simple fix: change rooms to room column
             rs = tdb.query(tdb, "Select * from room"); 
+
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -463,10 +448,10 @@ public class Controller
         while (duplicateKey)
         {
             //May want to modify this and the table to save defenseStrength and armorDefense OR the player can just re-equip these
-            boolean err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
+            int err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
                     "values (" + savedHero[0] + ", " + savedHero[1] + ", " + savedHero[2] + ", " + savedHero[3] + ", " + savedHero[4] + ")");
 
-            if (err)
+            if (err == 0)
             {
                 key++;
                 tdb.modData(tdb, "UPDATE playerFile SET name = \'" + savedHero[1] + "\', hasInventory = " + savedHero[2] + ", score = " +
@@ -478,7 +463,7 @@ public class Controller
         return true;
     }
 
-    // UNFINISHED!!!!!!!!!!--------------------------------------NO TABLE EXISTS YET!!!
+    // UNFINISHED!!!!!!!!!!--------------------------------------Needs a lot of work!!!
     //save the rooms state to the savedRooms table
     //array should have key, playerID, and 1-50 rooms 0 or 1 for false/true is the room empty
     public static Boolean saveRoomState(String[] roomsState)
@@ -500,10 +485,10 @@ public class Controller
         while (duplicateKey)
         {
             //Need to create a savedRooms table
-            boolean err = tdb.modData(tdb, "Insert into Rooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
+            int err = tdb.modData(tdb, "Insert into emptyPlayerRooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
                     //"values (" + key + ", " + playerID + ", " + attackPower + ", " + health + ")");
 
-            if (err)
+            if (err == 0)
             {
                 key++;
                 //throw ends the process!
@@ -520,7 +505,7 @@ public class Controller
     public static Boolean saveHeroInventory(String inventoryState)
     {
         String[] heroItems = inventoryState.split("[|]");
-        boolean err;
+        int err;
         int inventorySize = heroItems.length;
         int[] wIndex = new int[(inventorySize-1)/2];
         int[] aIndex = new int[(inventorySize-1)/2];
@@ -606,7 +591,7 @@ public class Controller
             err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
                     "values (" + key + ", " + heroItems[0] + ", " + wIndex[0] + ", " + aIndex[0] + ", " + eIndex[0]+ ")");
 
-            if (err)
+            if (err == 0)
             {
                 key++;
                 //throw ends the process!
@@ -631,7 +616,7 @@ public class Controller
         rs = null;
         try
         {
-            rs = tdb.stmt.executeQuery(sql);
+            rs = stmt.executeQuery(sql);
         }
         catch(SQLException sqe)
         {
@@ -640,16 +625,21 @@ public class Controller
         return rs;
     }
 
-    private boolean modData(Controller tdb, String sql)
+    //tdb is not needed since it is set in the constructor and globally
+    private int modData(Controller tdb, String sql)
     {
+        //default value nothing is changed, 0.
+        int num = 0;
+
         try
         {
-            tdb.stmt.executeUpdate(sql);
+            num = stmt.executeUpdate(sql);
+            return num;
         }
         catch(SQLException sqe)
         {
-            sqe.printStackTrace();
+            //sqe.printStackTrace();
+            return num;
         }
-        return true;
     }
 }
