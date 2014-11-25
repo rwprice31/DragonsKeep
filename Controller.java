@@ -432,7 +432,17 @@ public class Controller
             {
                 if (rs.getInt("puzzleID") == puzzleIndex)
                 {
-                    puzzleBuilder.append(rs.getString("problem"));
+//                    puzzleBuilder.append(rs.getString("problem"));
+
+                    //formats the problem description with new lines
+                    String[] temp = rs.getString("problem").split("[+]");
+                    String str = temp[0];
+                    for (int u = 1; u < temp.length; u++)
+                    {
+                        str += "\n" + temp[u];
+                    }
+                    puzzleBuilder.append(str);
+
                     puzzleBuilder.append("|");
                     puzzleBuilder.append(rs.getString("solution"));
                     puzzleBuilder.append("|");
