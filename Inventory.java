@@ -15,7 +15,7 @@ public class Inventory
     private final int SIZELIMIT = 10;
     private String[][] ruckSack;
     char[] itemType; //A, E, W for armor, elixir, or weapon
-    private int itemCount;
+    private static int itemCount;
     private Weapon[] weapons;
     private Elixir[] elixirs;
     private Armor[] armors;
@@ -57,13 +57,12 @@ public class Inventory
                 }
             }
         }
-
-            System.out.println("You are unable to carry any more items.");
-            return false;
+        System.out.println("You are unable to carry any more items.");
+        return false;
 
     }
 
-    public void add(Armor armor)
+    public boolean add(Armor armor)
     {
         if (itemCount < SIZELIMIT)
         {
@@ -71,29 +70,27 @@ public class Inventory
             {
                 if (armors[x] == null)
                 {
-                    armors[x] = armor;
 //                    itemType[x] = 'a';
 
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
                         {
+                            armors[x] = armor;
                             ruckSack[p][0] = armors[x].getItemName();
                             ruckSack[p][1] = "a";
                             itemCount++;
-                            break;
+                            return true;
                         }
                     }
                 }
             }
         }
-        else
-        {
-            System.out.println("You are unable to carry any more items.");
-        }
+        System.out.println("You are unable to carry any more items.");
+        return false;
     }
 
-    public void add(Elixir elixir)
+    public boolean add(Elixir elixir)
     {
         if (itemCount < SIZELIMIT)
         {
@@ -101,26 +98,25 @@ public class Inventory
             {
                 if (elixirs[x] == null)
                 {
-                    elixirs[x] = elixir;
 //                    itemType[x] = 'e';
 
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
                         {
+                            elixirs[x] = elixir;
                             ruckSack[p][0] = elixirs[x].getItemName();
                             ruckSack[p][1] = "e";
                             itemCount++;
-                            break;
+                            return true;
                         }
                     }
                 }
             }
         }
         else
-        {
-            System.out.println("You are unable to carry any more items.");
-        }
+        System.out.println("You are unable to carry any more items.");
+        return false;
     }
 
 
@@ -142,6 +138,7 @@ public class Inventory
                             weapons[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
+                            itemCount--;
                             break;
                         }
                     }
@@ -155,6 +152,7 @@ public class Inventory
                             elixirs[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
+                            itemCount--;
                             break;
                         }
                     }
@@ -168,6 +166,7 @@ public class Inventory
                             armors[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
+                            itemCount--;
                             break;
                         }
                     }
@@ -182,10 +181,13 @@ public class Inventory
     {
         if (itemCount > 0)
         {
-            for (int i = 0; i < itemCount; i++)
+            for (int i = 0; i < ruckSack.length; i++)
             {
-                System.out.print("Item type: " + ruckSack[i][1]);
-                System.out.println(" Item: " + ruckSack[i][0]);
+                if (ruckSack[i][0] != null)
+                {
+                    System.out.print("Item type: " + ruckSack[i][1]);
+                    System.out.println(" Item: " + ruckSack[i][0]);
+                }
             }
         }
         else
