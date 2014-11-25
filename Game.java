@@ -298,12 +298,17 @@ public class Game
                     if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
                     {
                         player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
+                        System.out.println("You have drawn your " + response.substring(6));
                     } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
                     {
                         player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
+                        System.out.println("You have put on the " + response.substring(6));
                     } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                     {
                         player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
+                        System.out.println("You drank the " + response.substring(6));
+                        player.getInventory().remove(response.substring(6));
+
                     }
                 }
                 else
