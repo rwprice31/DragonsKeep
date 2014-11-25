@@ -1,4 +1,4 @@
-ï»¿PRAGMA foreign_keys=OFF;
+PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE [armor] ([armorID] Integer PRIMARY KEY ASC ON CONFLICT FAIL NOT NULL ON CONFLICT FAIL, [name] String NOT NULL ON CONFLICT FAIL, [armorDefense] Integer NOT NULL ON CONFLICT FAIL);
 INSERT INTO "armor" VALUES(1,'Standard Armor',6);
@@ -54,7 +54,7 @@ INSERT INTO "room" VALUES(42,45,NULL,NULL,40,'<EW> You walk into a room, and itâ
 INSERT INTO "room" VALUES(41,NULL,NULL,40,44,'<SW> You walk into a room, and you feel a bit dizzy with the hotness in here that you almost fall into the lava maze',0,NULL,NULL,NULL,NULL,10);
 INSERT INTO "room" VALUES(40,42,41,39,NULL,'<ENS> You walk into a room, and you see something on the floor. You come closer and see a Flail',0,NULL,NULL,5,NULL,NULL);
 INSERT INTO "room" VALUES(39,NULL,40,NULL,38,'<NW> You walk into a hall, and you see nothing valuable here.',1,NULL,NULL,NULL,NULL,NULL);
-INSERT INTO "room" VALUES(25,NULL,33,36,28,'<NSW> You walk into a room and you see a chest',0,1,NULL,NULL,NULL,NULL);
+INSERT INTO "room" VALUES(25,NULL,33,36,28,'<NSW> You walk into a room and you see a chest',0,2,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(26,NULL,21,NULL,27,'<NW> You walk into a room, and it''s very dark and surprisingly quiet',1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(27,26,NULL,NULL,23,'<EW> You walk into a room and you hear a loud screech',0,NULL,NULL,NULL,12,NULL);
 INSERT INTO "room" VALUES(28,25,NULL,NULL,21,'<EW> You walk into a room and you see a torch. What do you want to do',1,NULL,NULL,NULL,NULL,'');
@@ -83,13 +83,13 @@ INSERT INTO "room" VALUES(24,NULL,22,21,NULL,'<NS> You walk into a room, and its
 INSERT INTO "room" VALUES(1,2,NULL,NULL,NULL,'<E> Welcome to DragonsKeep! You''ve been sent on a quest by the people to relieve the City of Dragons Keep of its+Emperor , who is feared to have been corrupted by power.Your journey has led you to a fortress unlike anything you+have known, in the middle of seemingly nowhere. You stand inside this expansive under ground fortress. The air+smells of sulfur and death. A strange combination. He must be here... some where.++How to play+-----------+Before the description of every area you will see any combination of <N> = NORTH, <NS> = NORTH or SOUTH,+<NSE> = NORTH, SOUTH, or EAST, etc.indicating what direction you may proceed, NORTH, SOUTH,+EAST, or WEST respectively. To move forward down the steps into the darkness enter:+<head EAST>',1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(3,NULL,4,11,2,'<NSW> This room is dimly lit. There are two rows of steps leading to two different rooms and a very large set of steps+leading to what looks like a sacrifice table. Its a strange room, the steps+appear to be hanging over an abyss. You walk up to the sacrifice table and notice there isn''t a body on the table but a sword!++How to play+-----------+You discovered your first weapon. Go ahead, acquire it!+and move to the next room.',0,NULL,NULL,1,NULL,NULL);
 INSERT INTO "room" VALUES(4,5,NULL,3,NULL,'<SE> You''ve entered a new room of the fortress. A Dragon Keeper in an apron with pieces of unknown+raw meat in his pockets turns towards you. With a meat cleaver in hand he charges at you.++How to play+-----------+You are about to have your first battle.+Enter: <equip itemName> to equip any weapon you have.+then enter: <attack>',0,NULL,NULL,NULL,1,NULL);
-INSERT INTO "room" VALUES(5,6,NULL,NULL,4,'<EW> Hmm... its a room in perfect order...',0,NULL,NULL,NULL,NULL,3);
+INSERT INTO "room" VALUES(5,6,NULL,NULL,4,'<EW> Hmm... its a room in perfect order...',0,1,NULL,NULL,NULL,3);
 INSERT INTO "room" VALUES(6,NULL,NULL,7,5,'<SW> You enter the room and find it cleared out and barren.+Just as you turn to leave you notice out the corner of your eye a glass vessel of what looks to be elixir. Will you open it?++How to play+-----------+You may acquire this item and it will be stored in your rucksack. If at any time you want to use it or any item in your inventory+enter: <equip itemName>',0,NULL,1,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(7,14,6,8,NULL,'<NSE> You''ve entered a hall with nothing particularly meaningful.',1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(8,NULL,7,9,NULL,'<NS>You open the door to a the next room and find the room is badly flooded.+You take two steps forward half expecting to touch floor and slip beneath the surface. Its remarkably deep but before you+have time to think your dragged further beneath the water and a monster swims past striking you with its fin. Its fight or flight!',0,NULL,NULL,NULL,13,NULL);
 INSERT INTO "room" VALUES(9,NULL,8,NULL,10,'<NW> You''ve entered a hall with nothing particularly meaningful.',1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(10,9,NULL,NULL,12,'<EW> You''ve entered a hall with nothing particularly meaningful.',1,NULL,NULL,NULL,NULL,NULL);
 INSERT INTO "room" VALUES(11,NULL,3,12,NULL,'<NS>You''ve entered a new room of the fortress. A two star Dragon Keeper in an+apron with pieces of unknown raw meat slung over her shoulder turns towards you. With a meat cleaver in hand she charges at you.++How to play+-----------+You are about to battle.+Enter: <equip itemName> to equip any weapon you have.+then enter: <attack>',0,NULL,NULL,NULL,2,NULL);
-INSERT INTO "room" VALUES(12,10,11,13,NULL,'<NSE> You enter a the balcony of what appears to be a large theater for plays.',0,NULL,NULL,NULL,NULL,4);
+INSERT INTO "room" VALUES(12,10,11,13,NULL,'<NSE> You enter a the balcony of what appears to be a large theater for plays.',0,NULL,NULL,NULL,4,4);
 INSERT INTO "room" VALUES(2,3,NULL,NULL,1,'<EW> At the bottom of the steps is the smoldering remains of someone also who dared to venture in here. The smoldering+bones are still holding something. It appears to be a rucksack of some kind. It might come in handy to have something to+hold things.',0,NULL,NULL,NULL,NULL,NULL);
 COMMIT;
