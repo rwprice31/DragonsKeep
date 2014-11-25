@@ -7,11 +7,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.TreeMap;
 
-import org.apache.commons.lang3.text.WordUtils;
-
 /**
  * author: JJ Lindsay
- * version: 2.0
+ * version: 3.2
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
@@ -165,7 +163,22 @@ public class Game
     //This may be optional
     public static void quitGame()
     {
-
+        System.out.println("Do you want to save your game before closing? (yes/no)");
+        String in = input.nextLine();
+        if(in.equalsIgnoreCase("yes"))
+        {
+            saveGame();
+            System.exit(0);
+        }
+        else if(in.equalsIgnoreCase("no"))
+        {
+            System.exit(0);
+        }
+        else
+        {
+            System.out.println("Error interpreting your last request.");
+            quitGame();
+        }
     }
 
     public static void saveGame()
@@ -277,16 +290,17 @@ public class Game
             //currently broken
             else if (response.substring(0, 5).equalsIgnoreCase("equip"))
             {
-                //check that item exits
+                //check if the item exist in inventory
                 if (player.getInventory().confirmItem(response.substring(6)))
                 {
+                    //identify the item as a weapon, armor, or elixir by its itemType
                     if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
                     {
                         player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
-                    } else if (player.getInventory().getItemType(response).equalsIgnoreCase("a"))
+                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
                     {
                         player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
-                    } else if (player.getInventory().getItemType(response).equalsIgnoreCase("e"))
+                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                     {
                         player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
                     }
@@ -347,7 +361,32 @@ public class Game
             roomsMap.get(currentRoom).getIsElixir() == 0)
         {
             roomsMap.get(currentRoom).setIsEmpty(1);
-            roomsMap.get(currentRoom).setRoomDescription("This room is empty... and it looks a bit familiar");
+
+            //Adds direction to the empty rooms
+            String roomDirection = "<";
+            //checks the 4 possible exits
+            for (int x = 0; x < 4; x++)
+            {
+                //if an exit exist
+                if (Integer.parseInt(roomsMap.get(currentRoom).getChoices()[x]) != 0)
+                {
+                    if (x == 0)
+                    {
+                        roomDirection += "E";
+                    } else if (x == 1)
+                    {
+                        roomDirection += "N";
+                    } else if (x == 2)
+                    {
+                        roomDirection += "S";
+                    } else
+                    {
+                        roomDirection += "W";
+                    }
+                }
+            }
+            roomDirection += ">";
+            roomsMap.get(currentRoom).setRoomDescription(roomDirection + " This room is empty... and it looks a bit familiar.");
         }
     }
 
@@ -440,7 +479,7 @@ public class Game
         }while(repeatPuzzle);
     }
 
-    //Question for the Team:: should there be a change rooms method since its repeated in several classes?
+
     public static void changeRooms()
     {
 //        for (int check = 0; check <= 4; check++)
