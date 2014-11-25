@@ -1,4 +1,4 @@
-PRAGMA foreign_keys=OFF;
+﻿PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
 CREATE TABLE [armor] ([armorID] Integer PRIMARY KEY ASC ON CONFLICT FAIL NOT NULL ON CONFLICT FAIL, [name] String NOT NULL ON CONFLICT FAIL, [armorDefense] Integer NOT NULL ON CONFLICT FAIL);
 INSERT INTO "armor" VALUES(1,'Standard Armor',6);
@@ -20,8 +20,8 @@ CREATE TABLE [weapon] ([weaponID] Integer PRIMARY KEY ASC ON CONFLICT FAIL NOT N
 INSERT INTO "weapon" VALUES(1,'dagger',6);
 INSERT INTO "weapon" VALUES(2,'Knight''s Sword',31);
 INSERT INTO "weapon" VALUES(3,'Excaliber',60);
-INSERT INTO "weapon" VALUES(4,'The Mace',10);
-INSERT INTO "weapon" VALUES(5,'The Flail',17);
+INSERT INTO "weapon" VALUES(4,'Mace',10);
+INSERT INTO "weapon" VALUES(5,'Flail',17);
 INSERT INTO "weapon" VALUES(6,'Axe',8);
 INSERT INTO "weapon" VALUES(7,'Halberd',24);
 CREATE TABLE [savedInventory] ([inventoryID] INT PRIMARY KEY ASC ON CONFLICT FAIL NOT NULL ON CONFLICT FAIL, [playerID] INT NOT NULL ON CONFLICT FAIL, [weaponID] INT, [armorID] INT, [elixerID] INT);
