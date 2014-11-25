@@ -186,7 +186,20 @@ public class Inventory
                 if (ruckSack[i][0] != null)
                 {
                     System.out.print("Item type: " + ruckSack[i][1]);
-                    System.out.println(" Item: " + ruckSack[i][0]);
+                    System.out.print("\tItem: " + ruckSack[i][0]);
+
+                    if (ruckSack[i][1].equalsIgnoreCase("w"))
+                    {
+                        System.out.println(getWeapon("\tAttack boost: " + ruckSack[i][0]).getStrength());
+                    }
+                    else if (ruckSack[i][1].equalsIgnoreCase("a"))
+                    {
+                        System.out.println(getArmor("\tDefensive boost: " + ruckSack[i][0]).getArmorDefense());
+                    }
+                    else //elixir
+                    {
+                        System.out.println(getElixir("\tHealth boost: " + ruckSack[i][0]).getHealthBoost());
+                    }
                 }
             }
         }

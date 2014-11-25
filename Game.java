@@ -45,10 +45,9 @@ public class Game
     public static boolean login()
     {
         System.out.println("Enter your user name: ");
-//        input.nextLine(); //necessary since the previous use was for reading an int UNTESTED!!!
         loginName = input.nextLine();
 
-        //verify user account
+        //verify user account exist
         if (Controller.loginAccount(loginName))
         {
             //get saved player data
@@ -108,59 +107,56 @@ public class Game
     public static boolean createAccount()
     {
         System.out.println("Enter a name you would like to create for your account: ");
-//        input.nextLine(); // necessary since the previous use was for reading an int
         String name = input.nextLine();
 
-        //BEFORE creating Hero, verify the name is unique... somehow
-        player = new Hero(name, Controller.createAccount(name));
+        if (!Controller.loginAccount(name))
+        {
+            player = new Hero(name, Controller.createAccount(name));
+            return true;
+        }
 
-        return true;
-        //System.out.println("You entered: " + name);
-        //return true;
+        return false;
     }
 
     public static void playGame()
     {
-        Boolean waiting = true;
+        Boolean waiting;
         System.out.println("Welcome to Dragon's Keep!");
 
-        while(waiting)
+        do
         {
             System.out.println("Enter 1 to login or 2 to create a new account");
             String in = input.nextLine();
 
             if (in.equalsIgnoreCase("1"))
             {
+                //necessary to load saved rooms in loadGame()
                 loginResults = login();
                 if (loginResults)
                 {
-                    loadGame();
                     waiting = false;
+                    System.out.println("Account located. Loading game...");  //Debug Purposes
                 }
                 else
                 {
+                    waiting = true;
                     System.out.println("Could not locate your user name");
                 }
             } else if (in.equalsIgnoreCase("2"))
             {
-                createAccount();
-                System.out.println("Created your Account!");  //Debug Purposes
-
-                waiting = false;
+                //the main menu loops if user account already exist
+                waiting = !createAccount();
+                System.out.println("Your account was created!");  //Debug Purposes
             } else
             {
+                waiting = true;
                 System.err.println("Error interpreting your last request.");
             }
-        }
+        }while(waiting);
         loadGame();
-
-        // First time player enters here
         enteredRoom();
-
-
     }
 
-    //This may be optional
     public static void quitGame()
     {
     	System.out.println("Do you want to save your game before closing? (yes/no)");
@@ -190,17 +186,12 @@ public class Game
     //Not complete!!!
     public static void loadGame()
     {
-//        System.out.println("Entering\nload\ngame!");  //Debug Purposes
-
         String[] allRooms = Controller.loadAllRooms().split("[|]");
         String[] temp = new String[4];
         roomsMap = new TreeMap<Integer, Rooms>();
 
-//        System.out.println("collected all db rooms. Size of allRooms is: " + allRooms.length);  //Debug Purposes
         for (int i = 0; i < allRooms.length-11; i= i+12)
         {
-//            System.out.println("loading dbrooms into game");  //Debug Purposes
-
             rooms = new Rooms();
             temp[0] = allRooms[i+1];
             temp[1] = allRooms[i+2];
@@ -219,10 +210,7 @@ public class Game
             //converts roomID from string to int and stores roomID as key and the room created in a map
             roomsMap.put(Integer.parseInt(allRooms[i]), rooms);
         }
-//        System.out.println("have all rooms. Setting current room to 1");  //Debug Purposes
-
         currentRoom = 1;
-
 
         //user successfully logged into saved account
         if (loginResults)
@@ -233,7 +221,7 @@ public class Game
                 //retrieves the last recorded current room for this playerID
                 currentRoom = Integer.parseInt(savedRooms[1]);
 
-                //emptyPlayerRooms 0 = isEmpty false and 1 = isEmpty true
+                //emptyPlayerRooms 0 == isEmpty-false and 1 == isEmpty-true
                 for (int y = 2; y <= 51; y++)
                 {
                     //if is emptyPlayerRooms is 1 (i.e. true)
@@ -259,12 +247,11 @@ public class Game
         boolean looping = false;
         System.out.println("*****************************************");
 
-        //LOOP THIS for? while? do while?
         do
         {
             System.out.println("-----------------------------------------");
             System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
-                    "\nEnter \"attack\" to start the fight.");
+                    "\nEnter \"attack\" to start the fight. \nEnter \"run away\" to escape.");
             System.out.println("-----------------------------------------");
             System.out.println("Your health is currently: " + player.getHealth());
             System.out.println(monster.getName() + "'s health is: " + monster.getHealth());
@@ -272,23 +259,11 @@ public class Game
 
             String response = input.nextLine();
 
-            //DEBUG PURPOSES
-
-//            Weapon weapon1 = (Weapon)(player.getInventory().getItem("dagger"));
-//            System.out.println("Strength2 is " + weapon1.getStrength()); //gave junk
-//
-//
-
-            //END OF DEBUG CODE
-
-
-
             if (response.equalsIgnoreCase("inventory"))
             {
                 player.getInventory().view();
                 looping = true;
             }
-            //currently broken
             else if (response.substring(0, 5).equalsIgnoreCase("equip"))
             {
                 //check if the item exist in inventory
@@ -306,9 +281,8 @@ public class Game
                     } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                     {
                         player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
-                        System.out.println("You drank the " + response.substring(6));
+                        System.out.println("You drank all of the " + response.substring(6));
                         player.getInventory().remove(response.substring(6));
-
                     }
                 }
                 else
@@ -318,24 +292,20 @@ public class Game
                 looping = true;
             } else if (response.equalsIgnoreCase("attack"))
             {
-                //LOOP this
                 //player attacks first
                 if (monster.getHealth() - player.getAttackPower() > 0)
                 {
                     System.out.println("You lunged at " + monster.getName() + " but your attack wasn't good enough to bring'em down.");
                     monster.setHealth(monster.getHealth() - player.getAttackPower());
+                    looping = true;
                 }
                 else
                 {
-                    //temporary phrase
                     System.out.println("You dealt a deadly blow with that last move! You killed " + monster.getName() + ".");
                     //set monster to zero for this room
                     roomsMap.get(currentRoom).setIsMonster(0);
                     looping = false;
-                    continue;
-                    //player will auto return to enterRoom() to retrieve an item or continue further in the game
-
-
+                    continue; //prevents the next if from executing
                 }
                 //Monster retaliates
                 System.out.println("Your last attack didn't defeat " + monster.getName() + ". You only succeeded in making " + monster.getName() + " angry.");
@@ -344,20 +314,29 @@ public class Game
                     player.setHealth(player.getHealth() - monster.getAttackPower());
                 } else
                 {
-                    //temporary phrase
-                    System.out.println("Your losing a lot of blood, you don't know how." + monster.getName() + "attacked you so fast! Your stumbling towards the door..." +
+                    System.out.println("Your losing a lot of blood, you don't know how." + monster.getName() + "attacked you so fast! \nYour stumbling towards the door..." +
                             "\nyou've got to get out of here, you think to yourself.\nIt's no use. You collapse on the ground before even reaching door. Just before everything" +
                     " goes black, you think of the\npeople who were depending on you, and with your last breath you whisper I'm sorry.");
-                    //go back to last save or end game
+                    System.out.println("*****************************************\n");
+                    System.out.println("---------------GAME OVER-----------------\n");
+                    System.out.println("*****************************************");
+                    //player restarts at the main screen
+                    playGame();
+                    //go back to last save or end game??
                 }
-            } else
+            }
+            else if  (response.equalsIgnoreCase("run away"))
+            {
+                System.out.println("You ran away screaming, your heart is racing." +
+                 "\nRefusing to look back, you think to yourself, that monster can't POSSIBLY get any stronger...");
+                monster.setHealth(monster.getHealth() + 5);
+                looping = false;
+            }
+            else
             {
                 System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
             }
-
         }while(looping);
-
-
     }
 
     public static void emptyRoom()
@@ -420,7 +399,7 @@ public class Game
 
             System.out.println("You have found " + dbElixir[0] + " and added it to your inventory.");
 
-        } else //if (roomsMap.get(currentRoom).getIsWeapon() > 0)
+        } else
         {
             //get an weapon from the database
             String[] dbWeapon = Controller.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon()).split("[|]");
@@ -431,10 +410,9 @@ public class Game
 
             System.out.println("You have found " + dbWeapon[0] + " and added it to your inventory.");
         }
-
     }
 
-    //Pretty much complete
+    //this is how puzzle soving is handled
     public static void solvePuzzle()
     {
         //create and puzzle from the db
@@ -442,7 +420,6 @@ public class Game
         puzzle = new Puzzle(dbPuzzle[0], dbPuzzle[1], dbPuzzle[2], dbPuzzle[3], Integer.parseInt(dbPuzzle[4]));
         Boolean repeatPuzzle = false;
 
-        //Loop
         do
         {
             System.out.println(puzzle.getPuzzle());
@@ -451,15 +428,14 @@ public class Game
             if (puzzle.getSolution().equalsIgnoreCase(response))
             {
                 repeatPuzzle = false;
-                puzzle.getSuccessMessage();
+                System.out.println(puzzle.getSuccessMessage());
                 roomsMap.get(currentRoom).setIsPuzzle(0);
             }
             else
             {
-                puzzle.getFailureMessage();
+                System.out.println(puzzle.getFailureMessage());
                 Boolean unclearResponse;
 
-                //Loop This
                 do
                 {
                     System.out.println("Try again? (yes/no)");
@@ -485,20 +461,103 @@ public class Game
         }while(repeatPuzzle);
     }
 
+    public static void checkingStatus()
+    {
+        boolean looping;
+        do
+        {
+            System.out.println("-----------------------------------------");
+            System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
+                    "Enter \"save\" to save your game. \nEnter \"quit\" to quit the game. \nEnter \"exit\" to return to game");
+            System.out.println("-----------------------------------------");
+            System.out.println("Your health is currently: " + player.getHealth());
+            System.out.println("-----------------------------------------");
+
+            String response = input.nextLine();
+
+            if (response.equalsIgnoreCase("inventory"))
+            {
+                player.getInventory().view();
+                looping = true;
+            }
+            //currently broken
+            else if (response.substring(0, 5).equalsIgnoreCase("equip"))
+            {
+                //check if the item exist in inventory
+                if (player.getInventory().confirmItem(response.substring(6)))
+                {
+                    //identify the item as a weapon, armor, or elixir by its itemType
+                    if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
+                    {
+                        player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
+                        System.out.println("You have drawn your " + response.substring(6));
+                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
+                    {
+                        player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
+                        System.out.println("You have put on the " + response.substring(6));
+                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
+                    {
+                        player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
+                        System.out.println("You drank all of the " + response.substring(6));
+                        player.getInventory().remove(response.substring(6));
+                    }
+                }
+                else
+                {
+                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                }
+                looping = true;
+            } else if (response.equalsIgnoreCase("save"))
+            {
+                saveGame();
+                looping = true;
+            } else if (response.equalsIgnoreCase("quit"))
+            {
+                looping = false;
+                quitGame();
+            } else if (response.equalsIgnoreCase("exit"))
+            {
+                looping = false;
+            } else
+            {
+                System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                looping = true;
+            }
+        }while(looping);
+    }
 
     public static void changeRooms()
     {
-//        for (int check = 0; check <= 4; check++)
-//        {
-//            System.out.println(roomsMap.get(currentRoom).getChoices()[check]);
-//        }
-//            System.out.println();
-            Boolean loop;
+        Boolean loop;
 
-        //LOOP THIS
+        //display possible exits
+        String roomDirection = "<";
+        //checks the 4 possible exits
+        for (int x = 0; x < 4; x++)
+        {
+            //if an exit exist
+            if (Integer.parseInt(roomsMap.get(currentRoom).getChoices()[x]) != 0)
+            {
+                if (x == 0)
+                {
+                    roomDirection += "E";
+                } else if (x == 1)
+                {
+                    roomDirection += "N";
+                } else if (x == 2)
+                {
+                    roomDirection += "S";
+                } else
+                {
+                    roomDirection += "W";
+                }
+            }
+        }
+        roomDirection += "> ";
+
         do
         {
-            System.out.println("Where would you like to go next?");
+            System.out.println(roomDirection + "Where would you like to go next?");
             String response = input.nextLine();
 
             if (response.equalsIgnoreCase("head East") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]) != 0)
@@ -545,12 +604,9 @@ public class Game
         System.out.println(roomsMap.get(currentRoom).getRoomDescription());
         String response;
         boolean loop;
-        //NOTE: To deal with rooms with puzzle + item or monster + item
 
-        //LOOP THIS
         do
         {
-            //This first if is NEW and needs to be improved/written better
             //rucksack is not an item, monster or puzzle so this is necessary!
             if (2 == currentRoom && player.getInventory() == null)
             {
@@ -642,6 +698,11 @@ public class Game
             //if there is no monster, puzzle, or item.
             else
             {
+                System.out.println("Would you like to pull up the menu? <yes, no>");
+                String userResponse = input.nextLine();
+
+                if (userResponse.equalsIgnoreCase("yes")){checkingStatus();}
+
                 loop = false;
                 emptyRoom();
                 changeRooms();
@@ -658,22 +719,6 @@ public class Game
 
     public static void main(String[] args)
     {
-//DEBUG PURPOSE        String word = new String("equip1sword");
-//DEBUG PURPOSE        System.out.println("Your word is equip sword before substring. After: " + word.substring(6));
         playGame();
-//        String name = "Abc\nBCD\nEfG";
-//        String[] tempName = name.split("[\n]");
-//        System.out.println(tempName[0]);
-//        System.out.println(tempName[1]);
-//        System.out.println(tempName[2]);
-
-//        StringBuilder returned = new StringBuilder();
-//        returned.append(tempName[0]);
-//        returned.append("\n");
-//        returned.append(tempName[1]);
-//        returned.append("\n");
-//        returned.append(tempName[2]);
-//
-//        System.out.println(returned);
     }
 }
