@@ -42,7 +42,6 @@ public class Inventory
                 if (weapons[x] == null)
                 {
 //                    itemType[x] = 'w';
-
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -59,7 +58,6 @@ public class Inventory
         }
         System.out.println("You are unable to carry any more items.");
         return false;
-
     }
 
     public boolean add(Armor armor)
@@ -71,7 +69,6 @@ public class Inventory
                 if (armors[x] == null)
                 {
 //                    itemType[x] = 'a';
-
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -99,7 +96,6 @@ public class Inventory
                 if (elixirs[x] == null)
                 {
 //                    itemType[x] = 'e';
-
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -114,7 +110,6 @@ public class Inventory
                 }
             }
         }
-        else
         System.out.println("You are unable to carry any more items.");
         return false;
     }
@@ -190,15 +185,15 @@ public class Inventory
 
                     if (ruckSack[i][1].equalsIgnoreCase("w"))
                     {
-                        System.out.println(getWeapon("\tAttack boost: " + ruckSack[i][0]).getStrength());
+                        System.out.println("\tAttack boost: " + getWeapon(ruckSack[i][0]).getStrength());
                     }
                     else if (ruckSack[i][1].equalsIgnoreCase("a"))
                     {
-                        System.out.println(getArmor("\tDefensive boost: " + ruckSack[i][0]).getArmorDefense());
+                        System.out.println("\tDefensive boost: " + getArmor( ruckSack[i][0]).getArmorDefense());
                     }
                     else //elixir
                     {
-                        System.out.println(getElixir("\tHealth boost: " + ruckSack[i][0]).getHealthBoost());
+                        System.out.println("\tHealth boost: " + getElixir(ruckSack[i][0]).getHealthBoost());
                     }
                 }
             }
@@ -312,6 +307,11 @@ public class Inventory
         }
         System.out.println("DEBUG CODE " + itemName + " could not be found in your inventory."); //This will come out the final version
         return null;
+    }
+
+    public String[][] getRuckSack()
+    {
+        return ruckSack;
     }
 }
 
