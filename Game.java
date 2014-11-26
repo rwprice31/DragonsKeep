@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 /**
  * author: JJ Lindsay
- * version: 3.2
+ * version: 4.0
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
@@ -37,7 +37,7 @@ public class Game
     private static String[] heroInventory;
     private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
     private static String loginName;
-    private static Boolean loginResults = false;
+    private static Boolean loginResults;
 
     private static Scanner input = new Scanner(System.in);
 
@@ -146,7 +146,7 @@ public class Game
             {
                 //the main menu loops if user account already exist
                 waiting = !createAccount();
-                System.out.println("Your account was created!");  //Debug Purposes
+                if (!waiting){System.out.println("Your account was created!");}  //Debug Purposes
             } else
             {
                 waiting = true;
@@ -179,7 +179,36 @@ public class Game
 
     public static void saveGame()
     {
+        String heroData = player.getPlayerID() + "|" + player.getName() + "|";
+        if (player.getInventory() != null)
+        {
+            heroData += "1" + "|";
+        }
+        else
+        {
+            heroData += "0" + "|";
+        }
+        heroData += player.getScore() + "|" + player.getHealth();
+        //saves the player ID, name, hasInventory, score, and health to the database
+        Controller.saveHeroData(heroData);  //testing with fixed values
 
+        //saves the player's inventory
+        Controller.saveHeroInventory(player.getPlayerID(), player.getInventory().getRuckSack());
+
+        //saves the state of all the rooms for this player
+        String savedRooms = player.getPlayerID() + "|" + currentRoom;
+        for (int i = 1; i <= 50;  i++)
+        {
+            if (roomsMap.get(i).getIsEmpty() == 0)
+            {
+                savedRooms += "|" + 0;
+            }
+            else
+            {
+                savedRooms += "|" + 1;
+            }
+        }
+        Controller.saveRoomState(savedRooms);
     }
 
     //Not complete!!!
@@ -214,24 +243,29 @@ public class Game
         //user successfully logged into saved account
         if (loginResults)
         {
+//            System.out.println("reached inside return user rooms loader");  //DEBUG PURPOSE
+
             String[] savedRooms = Controller.loadSavedRooms(player.getPlayerID()).split("[|]");
+//            System.out.println("dbsavedRooms playerID " + savedRooms[0] + "playerID populated: " + player.getPlayerID());  //DEBUG PURPOSE
+
             if (Integer.parseInt(savedRooms[0]) == player.getPlayerID())
             {
                 //retrieves the last recorded current room for this playerID
                 currentRoom = Integer.parseInt(savedRooms[1]);
+//                System.out.println("loaded currentroom" + currentRoom);  //DEBUG PURPOSE
 
-                //emptyPlayerRooms 0 == isEmpty-false and 1 == isEmpty-true
+                //is the room empty (1 for true, 0 for false)
                 for (int y = 2; y <= 51; y++)
                 {
-                    //if is emptyPlayerRooms is 1 (i.e. true)
+                    //if the room is empty
                     if (Integer.parseInt(savedRooms[y]) == 1)
                     {
-                        roomsMap.get(y).setRoomDescription("This room is empty... and it looks a bit familiar");
-                        roomsMap.get(y).setIsEmpty(1);
-                        roomsMap.get(y).setIsArmor(0);
-                        roomsMap.get(y).setIsElixir(0);
-                        roomsMap.get(y).setIsWeapon(0);
-                        roomsMap.get(y).setIsPuzzle(0);
+                        roomsMap.get(y-1).setRoomDescription("This room is empty... and it looks a bit familiar");
+                        roomsMap.get(y-1).setIsEmpty(1);
+                        roomsMap.get(y-1).setIsArmor(0);
+                        roomsMap.get(y-1).setIsElixir(0);
+                        roomsMap.get(y-1).setIsWeapon(0);
+                        roomsMap.get(y-1).setIsPuzzle(0);
                     }
                 }
             }
@@ -243,7 +277,7 @@ public class Game
         //create monster
         String[] dbMonster = Controller.retrieveMonster(roomsMap.get(currentRoom).getIsMonster()).split("[|]");
         monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
-        boolean looping = false;
+        boolean looping;
         System.out.println("*****************************************");
 
         do
@@ -258,82 +292,86 @@ public class Game
 
             String response = input.nextLine();
 
-            if (response.equalsIgnoreCase("inventory"))
+            if (response.length() > 5)
             {
-                player.getInventory().view();
-                looping = true;
-            }
-            else if (response.substring(0, 5).equalsIgnoreCase("equip"))
-            {
-                //check if the item exist in inventory
-                if (player.getInventory().confirmItem(response.substring(6)))
+                if (response.equalsIgnoreCase("inventory"))
                 {
-                    //identify the item as a weapon, armor, or elixir by its itemType
-                    if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
-                    {
-                        player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
-                        System.out.println("You have drawn your " + response.substring(6));
-                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
-                    {
-                        player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
-                        System.out.println("You have put on the " + response.substring(6));
-                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
-                    {
-                        player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
-                        System.out.println("You drank all of the " + response.substring(6));
-                        player.getInventory().remove(response.substring(6));
-                    }
-                }
-                else
-                {
-                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
-                }
-                looping = true;
-            } else if (response.equalsIgnoreCase("attack"))
-            {
-                //player attacks first
-                if (monster.getHealth() - player.getAttackPower() > 0)
-                {
-                    System.out.println("You lunged at " + monster.getName() + " but your attack wasn't good enough to bring'em down.");
-                    monster.setHealth(monster.getHealth() - player.getAttackPower());
+                    player.getInventory().view();
                     looping = true;
-                }
-                else
+                } else if (response.substring(0, 5).equalsIgnoreCase("equip") && response.length() > 5)
                 {
-                    System.out.println("You dealt a deadly blow with that last move! You killed " + monster.getName() + ".");
-                    //set monster to zero for this room
-                    roomsMap.get(currentRoom).setIsMonster(0);
+                    //check if the item exist in inventory
+                    if (player.getInventory().confirmItem(response.substring(6)))
+                    {
+                        //identify the item as a weapon, armor, or elixir by its itemType
+                        if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
+                        {
+                            player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
+                            System.out.println("You have drawn your " + response.substring(6));
+                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
+                        {
+                            player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
+                            System.out.println("You have put on the " + response.substring(6));
+                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
+                        {
+                            player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
+                            System.out.println("You drank all of the " + response.substring(6));
+                            player.getInventory().remove(response.substring(6));
+                        }
+                    } else
+                    {
+                        System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    }
+                    looping = true;
+                } else if (response.equalsIgnoreCase("attack"))
+                {
+                    //player attacks first
+                    if (monster.getHealth() - player.getAttackPower() > 0)
+                    {
+                        System.out.println("You lunged at " + monster.getName() + " but your attack wasn't good enough to bring'em down.");
+                        monster.setHealth(monster.getHealth() - player.getAttackPower());
+                        looping = true;
+                    } else
+                    {
+                        System.out.println("You dealt a deadly blow with that last move! You killed " + monster.getName() + ".");
+                        //set monster to zero for this room
+                        roomsMap.get(currentRoom).setIsMonster(0);
+                        looping = false;
+                        continue; //prevents the next if from executing
+                    }
+                    //Monster retaliates
+                    System.out.println("Your last attack didn't defeat " + monster.getName() + ". You only succeeded in making " + monster.getName() + " angry.");
+                    if (player.getHealth() - monster.getAttackPower() > 0)
+                    {
+                        player.setHealth(player.getHealth() - monster.getAttackPower());
+                    } else
+                    {
+                        System.out.println("Your losing a lot of blood, you don't know how." + monster.getName() + "attacked you so fast! \nYour stumbling towards the door..." +
+                                "\nyou've got to get out of here, you think to yourself.\nIt's no use. You collapse on the ground before even reaching door. Just before everything" +
+                                " goes black, you think of the\npeople who were depending on you, and with your last breath you whisper I'm sorry.");
+                        System.out.println("*****************************************\n");
+                        System.out.println("---------------GAME OVER-----------------\n");
+                        System.out.println("*****************************************");
+                        //player restarts at the main screen
+                        playGame();
+                        //go back to last save or end game??
+                    }
+                } else if (response.equalsIgnoreCase("run away"))
+                {
+                    System.out.println("You ran away screaming, your heart is racing." +
+                            "\nRefusing to look back, you think to yourself, that monster can't POSSIBLY get any stronger...");
+                    monster.setHealth(monster.getHealth() + 5);
                     looping = false;
-                    continue; //prevents the next if from executing
-                }
-                //Monster retaliates
-                System.out.println("Your last attack didn't defeat " + monster.getName() + ". You only succeeded in making " + monster.getName() + " angry.");
-                if (player.getHealth() - monster.getAttackPower() > 0)
-                {
-                    player.setHealth(player.getHealth() - monster.getAttackPower());
                 } else
                 {
-                    System.out.println("Your losing a lot of blood, you don't know how." + monster.getName() + "attacked you so fast! \nYour stumbling towards the door..." +
-                            "\nyou've got to get out of here, you think to yourself.\nIt's no use. You collapse on the ground before even reaching door. Just before everything" +
-                    " goes black, you think of the\npeople who were depending on you, and with your last breath you whisper I'm sorry.");
-                    System.out.println("*****************************************\n");
-                    System.out.println("---------------GAME OVER-----------------\n");
-                    System.out.println("*****************************************");
-                    //player restarts at the main screen
-                    playGame();
-                    //go back to last save or end game??
+                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    looping = true;
                 }
-            }
-            else if  (response.equalsIgnoreCase("run away"))
-            {
-                System.out.println("You ran away screaming, your heart is racing." +
-                 "\nRefusing to look back, you think to yourself, that monster can't POSSIBLY get any stronger...");
-                monster.setHealth(monster.getHealth() + 5);
-                looping = false;
             }
             else
             {
                 System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                looping = true;
             }
         }while(looping);
     }
@@ -411,7 +449,7 @@ public class Game
         }
     }
 
-    //this is how puzzle soving is handled
+    //this is how puzzle solving is handled
     public static void solvePuzzle()
     {
         //create and puzzle from the db
@@ -460,14 +498,14 @@ public class Game
         }while(repeatPuzzle);
     }
 
-    public static void checkingStatus()
+    public static void gameMenu()
     {
         boolean looping;
         do
         {
             System.out.println("-----------------------------------------");
             System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
-                    "Enter \"save\" to save your game. \nEnter \"quit\" to quit the game. \nEnter \"exit\" to return to game");
+                    "\nEnter \"save\" to save your game. \nEnter \"quit\" to quit the game. \nEnter \"exit\" to return to game");
             System.out.println("-----------------------------------------");
             System.out.println("Your health is currently: " + player.getHealth());
             System.out.println("-----------------------------------------");
@@ -478,6 +516,22 @@ public class Game
             {
                 player.getInventory().view();
                 looping = true;
+            }
+            else if (response.equalsIgnoreCase("exit"))
+            {
+                System.out. println("Entered exit successfully");  //DEBUG PURPOSE
+                changeRooms();
+                looping = false;
+            }
+            else if (response.equalsIgnoreCase("save"))
+            {
+                saveGame();
+                looping = true;
+            }
+            else if (response.equalsIgnoreCase("quit"))
+            {
+                quitGame();
+                looping = false;
             }
             //currently broken
             else if (response.substring(0, 5).equalsIgnoreCase("equip"))
@@ -506,18 +560,8 @@ public class Game
                     System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
                 }
                 looping = true;
-            } else if (response.equalsIgnoreCase("save"))
-            {
-                saveGame();
-                looping = true;
-            } else if (response.equalsIgnoreCase("quit"))
-            {
-                looping = false;
-                quitGame();
-            } else if (response.equalsIgnoreCase("exit"))
-            {
-                looping = false;
-            } else
+            }
+            else
             {
                 System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
                 looping = true;
@@ -556,10 +600,15 @@ public class Game
 
         do
         {
-            System.out.println(roomDirection + "Where would you like to go next?");
+            System.out.println(roomDirection + "Where would you like to go next or enter \"menu\" to pull up the game menu.");
             String response = input.nextLine();
 
-            if (response.equalsIgnoreCase("head East") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]) != 0)
+            if (response.equalsIgnoreCase("menu"))
+            {
+                loop = false;
+                gameMenu();
+            }
+            else if (response.equalsIgnoreCase("head East") && Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]) != 0)
             {
                 currentRoom = Integer.parseInt(roomsMap.get(currentRoom).getChoices()[0]);
                 loop = false;
@@ -697,11 +746,6 @@ public class Game
             //if there is no monster, puzzle, or item.
             else
             {
-                System.out.println("Would you like to pull up the menu? <yes, no>");
-                String userResponse = input.nextLine();
-
-                if (userResponse.equalsIgnoreCase("yes")){checkingStatus();}
-
                 loop = false;
                 emptyRoom();
                 changeRooms();
