@@ -1,5 +1,14 @@
-DragonsKeep - Welcome to pre-Develop - JJrev4
+DragonsKeep - Welcome to pre-Develop
 ===========
 
 Dragons Keep is a text based adventure game being written for ITEC 3860, Software Development 1
-Everton
+
+HOW TO RUN
+--------------
+1) The game opens from the game class.
+     VIEW Package: game.java
+     CONTROLLER Package: Controller.java
+     Model Package: All remaining java files
+
+2) Get the lastest database file and attach it to the game. If DragonsKeep.txt is the only database file,
+   convert it to a .db or get the lastest from gitHub branch "Database".
