@@ -1,14 +1,10 @@
 package Controller;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 /**
  * author: JJ Lindsay
- * version: 1.0
+ * version: 2.0
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
@@ -21,8 +17,14 @@ public class Controller
     private static Statement stmt;
     private static ResultSet rs = null;
     private static Controller tdb = new Controller();
+    private static Connection conn = null;
     private static boolean duplicateKey = true;
-    private static int key = 1;
+//    private static int key = 1;
+    private static int caKey = 1;
+    private static int shiKey = 1;
+    private static int cpKey = 1;
+    private static int cmKey = 1;
+
 
     private Controller()
     {
@@ -48,7 +50,7 @@ public class Controller
         try
         {
             //Establish a connection to the database
-            Connection conn = DriverManager.getConnection(dbURL);
+            conn = DriverManager.getConnection(dbURL);
             //Create a container for the SQL statement
             stmt = conn.createStatement();
             //set timeout on the statement
@@ -58,6 +60,7 @@ public class Controller
         {
             System.out.println(sqe.getMessage());
         }
+
     }
     
     //verifies the user account
@@ -76,6 +79,9 @@ public class Controller
                     return true;
                 }
             }
+
+            rs.close();
+            stmt.close();
         }
         catch(SQLException sqe)
         {
@@ -87,67 +93,105 @@ public class Controller
     //creates a user profile
     public static int createAccount(String name)
     {
-        do{
-        //BEFORE inserting:: compare user requested name against names already in the db
-//            System.out.println("Starting key is: " + key);  //DEBUG PURPOSES
 
-            //the value returned is the number of effected rows (for us its either 0 or 1)
-            int err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
-                    "values (" + key + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
-            //System.out.println("err is: " + err); //DEBUG PURPOSES
+        try
+        {
+            do{
+            //BEFORE inserting:: compare user requested name against names already in the db
+    //            System.out.println("Starting key is: " + key);  //DEBUG PURPOSES
 
-            //enters here when duplicate id are used
-            //i.e. 0 rows were effected
-            if (err == 0)
-            {
-//                System.out.println("The key is: " + key);  //DEBUG PURPOSES
-                key++;
-            }
-            else
-            {
-                //System.out.println("Set duplicateKey to false ");  //DEBUG PURPOSES
-                duplicateKey = false;
-            }
-       }while (duplicateKey);
-        return key;
+                //the value returned is the number of effected rows (for us its either 0 or 1)
+                int err = tdb.modData(tdb, "Insert into playerFile (playerID, name, hasInventory, score, health) " +
+                        "values (" + caKey + ", \'" + name + "\'," + 0 + "," + 0 + "," + 100 + ")");
+//                conn.commit();
+
+                //System.out.println("err is: " + err); //DEBUG PURPOSES
+
+                //enters here when duplicate id are used
+                //i.e. 0 rows were effected
+                if (err == 0)
+                {
+    //                System.out.println("The key is: " + key);  //DEBUG PURPOSES
+                    caKey++;
+                }
+                else
+                {
+//                    conn.commit();
+                    //System.out.println("Set duplicateKey to false ");  //DEBUG PURPOSES
+                    duplicateKey = false;
+                }
+           }while (duplicateKey);
+
+            stmt.close();
+//            conn.close();
+        } catch (SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
+        }
+        return caKey;
     }
 
     //creates a new puzzle
     public static boolean createPuzzle(String problem, String solution, String successMessage, String failureMessage, int isSolved)
     {
-        while (duplicateKey)
+        try
         {
-	    //fix: changed the name of some columns to match with the database
-            int err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
-                    "values (" + key + ", \'" + problem + "\',\'" + solution + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
-
-            if (err == 0)
+            while (duplicateKey)
             {
-                key++;
+     		//fix: changed the name of some columns to match with the database
+                int err = tdb.modData(tdb, "Insert into puzzle(puzzleID, problem, solution, successMessage, failureMessage, isSolved) " +
+                        "values (" + cpKey + ", \'" + problem + "\',\'" + solution + "\',\'" + successMessage + "\',\'" + failureMessage + "\'," + isSolved + ")");
+
+                if (err == 0)
+                {
+                    cpKey++;
+                }
+                else
+                {
+//                    conn.commit();
+                    duplicateKey = false;
+                }
             }
-            else
-                duplicateKey = false;
+
+            stmt.close();
+//            conn.close();
+        }
+        catch (SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
         }
         return true;
-
     }
 
     //creates a new monster
     public static boolean createMonster(int monsterID, String name, int attackPower, int health)
     {
-        while (duplicateKey)
+        try
         {
-            int err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
-                    "values (" + key + ", \'" + name + "\'," + attackPower + "," + health + ")");
-
-            if (err == 0)
+            while (duplicateKey)
             {
-                key++;
-                //throw ends the process!
-                //throw new AssertionError("Entered duplicate key in db");
+                int err = tdb.modData(tdb, "Insert into monster(monsterID, name, attackPower, health) " +
+                        "values (" + cmKey + ", \'" + name + "\'," + attackPower + "," + health + ")");
+
+                if (err == 0)
+                {
+                    cmKey++;
+                    //throw ends the process!
+                    //throw new AssertionError("Entered duplicate key in db");
+                }
+                else
+                {
+//                    conn.commit();
+                    duplicateKey = false;
+                }
             }
-            else
-                duplicateKey = false;
+
+            stmt.close();
+//            conn.close();
+        }
+        catch (SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
         }
         return true;
     }
@@ -160,20 +204,25 @@ public class Controller
         try
         {
             //Query the database. Returns the results in a ResultSet
-            rs = tdb.query(tdb, "Select * from emptyPlayerRooms WHERE playerID = " + playerID + " ");
+            rs = tdb.query(tdb, "Select * from playerRooms WHERE playerID = " + playerID);
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
                 savedRoomBuilder.append(rs.getInt("playerID"));
+                savedRoomBuilder.append("|");
                 savedRoomBuilder.append(rs.getInt("currentRoom"));
 
                 //add saved rooms 1 - 50
                 for (int x = 1; x <= 50; x++)
                 {
                     savedRoomBuilder.append("|");
-                    savedRoomBuilder.append(rs.getInt("room" + x + ""));
+                    savedRoomBuilder.append(rs.getInt("room" + x));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -225,7 +274,7 @@ public class Controller
                 roomBuilder.append("|");
                 roomBuilder.append(rs.getInt("Armor"));
                 roomBuilder.append("|");
-                roomBuilder.append(rs.getInt("Elixer"));
+                roomBuilder.append(rs.getInt("Elixir"));
                 roomBuilder.append("|");
                 roomBuilder.append(rs.getInt("Weapon"));
                 roomBuilder.append("|");
@@ -234,6 +283,10 @@ public class Controller
                 roomBuilder.append(rs.getInt("Puzzle"));
                 roomBuilder.append("|");
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -241,7 +294,6 @@ public class Controller
         }
         roomBuilder.deleteCharAt(roomBuilder.lastIndexOf("|"));
         return roomBuilder.toString();
-
     }
 
     //(1/2) this is called first from Game class. loads the player profile after loginAccount returns true
@@ -270,13 +322,16 @@ public class Controller
                     heroBuilder.append("|");
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
             System.out.println(sqe.getMessage());
         }
         return heroBuilder.toString();
-
     }
 
     //(2/2) This is called from Game class auto once loadHero is called
@@ -287,7 +342,7 @@ public class Controller
         try
         {
             //Query the database. Returns the results in a ResultSet
-            rs = tdb.query(tdb, "Select * from savedInventory where playerID = " + playerID + " " );
+            rs = tdb.query(tdb, "Select * from savedInventory where playerID = " + playerID);
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
@@ -297,9 +352,13 @@ public class Controller
                 heroInventory.append("|");
                 heroInventory.append(rs.getInt("armorID"));
                 heroInventory.append("|");
-                heroInventory.append(rs.getInt("elixerID"));
+                heroInventory.append(rs.getInt("elixirID"));
                 heroInventory.append("|");
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -329,6 +388,10 @@ public class Controller
                     monsterBuilder.append(rs.getInt("health"));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -356,6 +419,10 @@ public class Controller
                     armorBuilder.append(rs.getInt("armorDefense"));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -383,6 +450,10 @@ public class Controller
                     elixirBuilder.append(rs.getInt("healthBoost"));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -410,6 +481,10 @@ public class Controller
                     weaponBuilder.append(rs.getInt("strength"));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -432,7 +507,17 @@ public class Controller
             {
                 if (rs.getInt("puzzleID") == puzzleIndex)
                 {
-                    puzzleBuilder.append(rs.getString("problem"));
+//                    puzzleBuilder.append(rs.getString("problem"));
+
+                    //formats the problem description with new lines
+                    String[] temp = rs.getString("problem").split("[+]");
+                    String str = temp[0];
+                    for (int u = 1; u < temp.length; u++)
+                    {
+                        str += "\n" + temp[u];
+                    }
+                    puzzleBuilder.append(str);
+
                     puzzleBuilder.append("|");
                     puzzleBuilder.append(rs.getString("solution"));
                     puzzleBuilder.append("|");
@@ -443,6 +528,10 @@ public class Controller
                     puzzleBuilder.append(rs.getInt("isSolved"));
                 }
             }
+
+            rs.close();
+            stmt.close();
+//            conn.close();
         }
         catch(SQLException sqe)
         {
@@ -451,82 +540,136 @@ public class Controller
         return puzzleBuilder.toString();
     }
 
-    //save the Hero attributes to the database
+    //save the Hero ID, name, hasInventory, score, health to the database
     public static Boolean saveHeroData(String heroAttributes)
     {
         String[] savedHero = heroAttributes.split("[|]");
 
-        while (duplicateKey)
+        try
         {
-            //May want to modify this and the table to save defenseStrength and armorDefense OR the player can just re-equip these
-            int err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
-                    "values (" + savedHero[0] + ", " + savedHero[1] + ", " + savedHero[2] + ", " + savedHero[3] + ", " + savedHero[4] + ")");
+                //playerID is the PK
+                //May want to modify this and the table to save defenseStrength and armorDefense OR the player can just re-equip these
+    //            int err = tdb.modData(tdb, "Insert into playerFile(playerID, name, hasInventory, score, health) " +
+    //                    "values (" + savedHero[0] + ", " + savedHero[1] + ", " + savedHero[2] + ", " + savedHero[3] + ", " + savedHero[4] + ")");
 
+
+
+//            int err = tdb.modData(tdb, "UPDATE playerFile SET health = 58 WHERE playerID = 1");
+
+
+            //may need to parseInt for some
+            int err = tdb.modData(tdb, "UPDATE playerFile SET hasInventory = " + savedHero[2] + ", score = " +
+                    savedHero[3] + ", health = " + savedHero[4] + " WHERE playerID = " + savedHero[0] + "");
+
+             //if no rows were changed
             if (err == 0)
             {
-                key++;
-                tdb.modData(tdb, "UPDATE playerFile SET name = \'" + savedHero[1] + "\', hasInventory = " + savedHero[2] + ", score = " +
-                        savedHero[3] + ", health = " + savedHero[4] + "WHERE playerID = " + savedHero[0]);
+                System.err.println("There was an error in updating saved Hero Data to playerFile");
+                return false;
+    //                tdb.modData(tdb, "UPDATE playerFile SET name = \'" + savedHero[1] + "\', hasInventory = " + savedHero[2] + ", score = " +
+    //                        savedHero[3] + ", health = " + savedHero[4] + "WHERE playerID = " + savedHero[0]);
             }
             else
-                duplicateKey = false;
+                System.out.println("Successfully saved Hero profile to the database.");
+
+//                conn.commit();  //may have to move under err
+
+            stmt.close();
+//            conn.close();
+        } catch (SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
         }
         return true;
     }
 
-    // UNFINISHED!!!!!!!!!!--------------------------------------Needs a lot of work!!!
+
     //save the rooms state to the savedRooms table
-    //array should have key, playerID, and 1-50 rooms 0 or 1 for false/true is the room empty
-    public static Boolean saveRoomState(String[] roomsState)
+    public static Boolean saveRoomState(String roomsState)
     {
-        StringBuilder rooms = new StringBuilder();
-        rooms.append("values (");
-        rooms.append(key);
-        rooms.append(", ");
-        rooms.append(roomsState[0]); //this is the playerID
+        String[] rooms = roomsState.split("[|]");
+        //PreparedStatement update = conn.prepareStatement();
 
-        //
-        for (int i = 1; i < roomsState.length; i++)
+        try
         {
-            rooms.append(", ");
-            rooms.append(roomsState[i]);
-        }
-        rooms.append(")");
 
-        while (duplicateKey)
-        {
-            //Need to create a savedRooms table
-            int err = tdb.modData(tdb, "Insert into emptyPlayerRooms(roomsStateID, playerID, attackPower, health) " + rooms.toString());
-                    //"values (" + key + ", " + playerID + ", " + attackPower + ", " + health + ")");
 
+
+//            //inserts room 1-50
+//            String playerRoomsInsert = "Insert into playerRooms(playerID";
+//            for (int i = 1; i <= 50; i++)
+//            {
+//                playerRoomsInsert += ", room" + i;
+//            }
+//            playerRoomsInsert += ") values (?";
+//
+//            //inserts data for room 1-50
+//            for (int i = 1; i <= 50; i++)
+//            {
+//                playerRoomsInsert += ", ?";
+//            }
+//            playerRoomsInsert += ")";
+//            int err = tdb.modData(tdb, playerRoomsInsert);
+
+
+
+            //inserts room 1-50
+            String playerRoomsInsert = "Insert into playerRooms(playerID, currentRoom";
+            for (int i = 1; i <= 50; i++)
+            {
+                playerRoomsInsert += ", room" + i;
+            }
+            playerRoomsInsert += ") values (" + rooms[0] + ", " + rooms[1];
+
+            //inserts data for room 1-50
+            for (int i = 1; i <= 50; i++)
+            {
+                playerRoomsInsert += ", " + rooms[i+1];
+            }
+            playerRoomsInsert += ")";
+            int err = tdb.modData(tdb, playerRoomsInsert);
+
+
+            //if no rows are updated
             if (err == 0)
             {
-                key++;
-                //throw ends the process!
-                //throw new AssertionError("Entered duplicate key in db");
+//                System.out.println("trying the update playerRooms over insert");  //DEBUG PURPOSE
+                playerRoomsInsert = "UPDATE playerRooms SET currentRoom = " + rooms[1] + ", room1  = " + rooms[2];
+                for (int i = 2; i <= 50; i++)
+                {
+                    playerRoomsInsert += ", room" + i + " = " + rooms[i+1];
+                }
+                playerRoomsInsert += " WHERE playerID = " + rooms[0];
+                tdb.modData(tdb, playerRoomsInsert);
+                System.out.println("Successfully saved the rooms to the database.");
             }
             else
-                duplicateKey = false;
+                System.out.println("Successfully saved the rooms to the database.");
+
+//            conn.commit();
+            stmt.close();
+//            conn.close();
+        } catch (SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
         }
         return true;
     }
 
     //Save the hero's inventory to the inventory table
     //inventoryState is playerID, itemType and item name
-    public static Boolean saveHeroInventory(String inventoryState)
+    public static Boolean saveHeroInventory(int playerID, String[][] playerInventory)
     {
-        String[] heroItems = inventoryState.split("[|]");
-        int err;
-        int inventorySize = heroItems.length;
-        int[] wIndex = new int[(inventorySize-1)/2];
-        int[] aIndex = new int[(inventorySize-1)/2];
-        int[] eIndex = new int[(inventorySize-1)/2];
-
+        String heroItems = ", " + playerID;
+        boolean looping;
         //InventoryState = itemType|name
         //PARSE inventoryState
-        for (int x = 1; x < inventorySize-1; x+=2)
+        for (int x = 0; x < playerInventory.length; x++)
         {
-            if (heroItems[x].equalsIgnoreCase("w"))
+//            System.out.println(playerInventory[x][1]);   //DEBUG PURPOSE
+
+            if (playerInventory[x][1] != null)
+            if (playerInventory[x][1].equalsIgnoreCase("w"))
             {
                 try
                 {
@@ -535,21 +678,24 @@ public class Controller
                     //Loop over the result set. next moves the cursor to the next record and returns the current record
                     while(rs.next())
                     {
-                        if (rs.getString("weaponName").equalsIgnoreCase(heroItems[x+1]))
+                        if (rs.getString("name").equalsIgnoreCase(playerInventory[x][0]))
                         {
-                            wIndex[x-1] = rs.getInt("weaponID");
-                            aIndex[x-1] = 0;
-                            eIndex[x-1] = 0;
+                            heroItems += ", " + rs.getInt("weaponID");
+                            heroItems += ", " + 0;
+                            heroItems += ", " + 0;
                             break;
                         }
                     }
+
+                    rs.close();
+                    stmt.close();
                 }
                 catch(SQLException sqe)
                 {
                     System.out.println(sqe.getMessage());
                 }
             }
-            else if (heroItems[x].equalsIgnoreCase("a"))
+            else if (playerInventory[x][1].equalsIgnoreCase("a"))
             {
                 try
                 {
@@ -558,21 +704,24 @@ public class Controller
                     //Loop over the result set. next moves the cursor to the next record and returns the current record
                     while(rs.next())
                     {
-                        if (rs.getString("armorName").equalsIgnoreCase(heroItems[x+1]))
+                        if (rs.getString("name").equalsIgnoreCase(playerInventory[x][0]))
                         {
-                            wIndex[x-1] = 0;
-                            aIndex[x-1] = rs.getInt("armorID");
-                            eIndex[x-1] = 0;
+                            heroItems += ", " + 0;
+                            heroItems += ", " + rs.getInt("armorID");
+                            heroItems += ", " + 0;
                             break;
                         }
                     }
+
+                    rs.close();
+                    stmt.close();
                 }
                 catch(SQLException sqe)
                 {
                     System.out.println(sqe.getMessage());
                 }
             }
-            else if (heroItems[x].equalsIgnoreCase("e"))
+            else if (playerInventory[x][1].equalsIgnoreCase("e"))
             {
                 try
                 {
@@ -581,44 +730,70 @@ public class Controller
                     //Loop over the result set. next moves the cursor to the next record and returns the current record
                     while(rs.next())
                     {
-                        if (rs.getString("elixirName").equalsIgnoreCase(heroItems[x+1]))
+                        if (rs.getString("name").equalsIgnoreCase(playerInventory[x][0]))
                         {
-                            wIndex[x-1] = 0;
-                            aIndex[x-1] = 0;
-                            eIndex[x-1] = rs.getInt("elixirID");
+                            heroItems += ", " + 0;
+                            heroItems += ", " + 0;
+                            heroItems += ", " + rs.getInt("elixirID");
                             break;
                         }
                     }
+
+                    rs.close();
+                    stmt.close();
                 }
                 catch(SQLException sqe)
                 {
                     System.out.println(sqe.getMessage());
                 }
             }
+            else
+                continue;
         }
 
-        while (duplicateKey)
-        {
-            err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
-                    "values (" + key + ", " + heroItems[0] + ", " + wIndex[0] + ", " + aIndex[0] + ", " + eIndex[0]+ ")");
 
+        //if the playerID already exist, delete it
+        try
+        {
+            //Query the database. Returns the results in a ResultSet
+            rs = tdb.query(tdb, "Select * from savedInventory");
+            //Loop over the result set. next moves the cursor to the next record and returns the current record
+            while(rs.next())
+            {
+                if (rs.getString("playerID").equalsIgnoreCase("" + playerID))
+                {
+                    int err = tdb.modData(tdb, "DELETE FROM savedInventory WHERE playerID = " + playerID);
+//                    if (err > 0){System.out.println("Successfully removed previous saved inventory before. Add new inventory...");}  //DEBUG PURPOSES
+                    break;
+                }
+            }
+
+            rs.close();
+            stmt.close();
+        }
+        catch(SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
+        }
+
+
+        do
+        {
+            int err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
+                    "values (" + shiKey + heroItems + ")");
+
+            //if no rows were changed
             if (err == 0)
             {
-                key++;
-                //throw ends the process!
-                // throw new AssertionError("Entered duplicate key in db");
+                shiKey++;
+                looping = true;
             }
             else
             {
-                key++;
-                for (int i = 1; i < wIndex.length; i++)
-                {
-                    tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
-                            "values (" + key + ", " + heroItems[0] + ", " + wIndex[i] + ", " + aIndex[i] + ", " + eIndex[i] + ")");
-                }
-                duplicateKey = false;
+                System.out.println("Successfully saved Hero inventory to the database.");
+                looping = false;
             }
-        }
+        }while(looping);
         return true;
     }
 
