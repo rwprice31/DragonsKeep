@@ -37,7 +37,7 @@ public class Game
     private static String[] heroInventory;
     private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
     private static String loginName;
-    private static Boolean loginResults;
+    private static Boolean loginResults = false;
 
     private static Scanner input = new Scanner(System.in);
 
