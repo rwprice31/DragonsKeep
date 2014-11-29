@@ -41,7 +41,6 @@ public class Inventory
             {
                 if (weapons[x] == null)
                 {
-//                    itemType[x] = 'w';
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -68,7 +67,6 @@ public class Inventory
             {
                 if (armors[x] == null)
                 {
-//                    itemType[x] = 'a';
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -95,7 +93,6 @@ public class Inventory
             {
                 if (elixirs[x] == null)
                 {
-//                    itemType[x] = 'e';
                     for(int p = 0; p < SIZELIMIT; p++)
                     {
                         if (ruckSack[p][0] == null)
@@ -267,41 +264,13 @@ public class Inventory
         return false;
     }
 
-//    //Retrieves the stats of an item in inventory
-//    public void getItemAttributes(String itemName)
-//    {
-//        int x = 0;
-//        boolean stop = false;
-//
-//        while (!stop)
-//        {
-//            if (ruckSack[x].getItemName().equalsIgnoreCase(itemName))
-//            {
-//                System.out.print("Item type: " + itemType[x]);
-//                System.out.println(" Item: " + ruckSack[x].getItemName());
-//                stop = true;
-//            }
-//            else if(x < SIZELIMIT)
-//            {
-//                x++;
-//            }
-//            else
-//            {
-//                stop = true;
-//                System.out.println(itemName + " could not be found in your inventory.");
-//            }
-//        }
-//    }
-
     //returns itemType
     public String getItemType(String itemName)
     {
         for (int s = 0; s < itemCount; s++)
         {
-//            System.out.println("Does this match dagger? " + ruckSack[s][1]);
             if (ruckSack[s][0].equalsIgnoreCase(itemName))
             {
-//                System.out.println("entered getItemType");
                 return ruckSack[s][1];
             }
         }
@@ -314,44 +283,3 @@ public class Inventory
         return ruckSack;
     }
 }
-
-
-//    //Adds an item to the inventory
-//    public void add(Weapon weapon, char itemType)
-//    {
-//        int x = 0;
-//        boolean looping = false;
-//
-//        do{
-//            if (ruckSack[x] == null)
-//            {
-//                if(itemType == 'w')
-//                {
-//                    for (int z = 0; z < SIZELIMIT; z++)
-//                    {
-//                        if (weapons[z] == null)
-//                            weapons[z] = weapon;
-//                    }
-//                }
-//                if(itemType == 'e')
-//                {}
-//                if(itemType == 'a')
-//                {}
-//                this.itemType[x] = itemType;
-//                ruckSack[x] = weapArmElix;
-//                stop = true;
-//                itemCount++;
-//            }
-//            else if(x < SIZELIMIT)
-//            {
-//                //Move the pointer to the next slot in inventory.
-//                x++;
-//            }
-//            else
-//            {
-//                stop = true;
-//                System.out.println("You are unable to carry any more items.");
-//            }
-//        }while (looping);
-//
-//    }
