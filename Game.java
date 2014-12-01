@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 /**
  * author: JJ Lindsay
- * version: 4.0
+ * version: 4.1
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
@@ -49,7 +49,7 @@ public class Game
             player = new Hero(Integer.parseInt(loginDetails[0]), loginDetails[1], Integer.parseInt(loginDetails[3]), Integer.parseInt(loginDetails[4]));
 
             //check for an inventory
-            if (loginDetails[2] != null)
+            if (!loginDetails[2].equalsIgnoreCase("0"))
             {
                 int p = 0;
                 player.createInventory();
@@ -58,7 +58,7 @@ public class Game
                 while(p < heroInventory.length-2)
                 {
                     //checks if a weaponID exists
-                    if (heroInventory[p] != null)
+                    if (!heroInventory[p].equalsIgnoreCase("0"))
                     {
                         //get the weapon from the database
                         String[] dbWeapon = Controller.retrieveWeapon(Integer.parseInt(heroInventory[p])).split("[|]");
@@ -67,7 +67,7 @@ public class Game
                         player.getInventory().add(weapon);
                     }
                     //checks if a armorID exists
-                    else if (heroInventory[p+1] != null)
+                    else if (!heroInventory[p+1].equalsIgnoreCase("0"))
                     {
                         //get the armor from the database
                         String[] dbArmor = Controller.retrieveArmor(Integer.parseInt(heroInventory[p + 1])).split("[|]");
@@ -76,7 +76,7 @@ public class Game
                         player.getInventory().add(armor);
                     }
                     //checks if a elixirID exists
-                    else if (heroInventory[p+2] != null)
+                    else if (!heroInventory[p+2].equalsIgnoreCase("0"))
                     {
                         //get the elixir from the database
                         String[] dbElixir = Controller.retrieveElixir(Integer.parseInt(heroInventory[p+2])).split("[|]");
@@ -104,10 +104,12 @@ public class Game
 
         if (!Controller.loginAccount(name))
         {
-            player = new Hero(name, Controller.createAccount(name));
+            //defaults to playerID 0 until save is called
+            player = new Hero(name, 0);
+//            player = new Hero(name, Controller.createAccount(name));
             return true;
         }
-
+        System.out.println("An account with that name already exist.");
         return false;
     }
 
@@ -172,6 +174,13 @@ public class Game
 
     public static void saveGame()
     {
+        //an Account is created in the database and the ID is set if the user did not login
+        if (!loginResults)
+        {
+            player.setPlayerID(Controller.createAccount(player.getName()));
+        }
+
+
         String heroData = player.getPlayerID() + "|" + player.getName() + "|";
         if (player.getInventory() != null)
         {
@@ -235,7 +244,6 @@ public class Game
         //user successfully logged into saved account
         if (loginResults)
         {
-
             String[] savedRooms = Controller.loadSavedRooms(player.getPlayerID()).split("[|]");
 
             if (Integer.parseInt(savedRooms[0]) == player.getPlayerID())
@@ -244,7 +252,7 @@ public class Game
                 currentRoom = Integer.parseInt(savedRooms[1]);
 
                 //is the room empty (1 for true, 0 for false)
-                for (int y = 2; y <= 51; y++)
+                for (int y = 2; y <= currentRoom+1; y++)
                 {
                     //if the room is empty
                     if (Integer.parseInt(savedRooms[y]) == 1)
@@ -287,7 +295,7 @@ public class Game
                 {
                     player.getInventory().view();
                     looping = true;
-                } else if (response.substring(0, 5).equalsIgnoreCase("equip") && response.length() > 5)
+                } else if (response.length() > 5 && response.substring(0, 5).equalsIgnoreCase("equip"))
                 {
                     //check if the item exist in inventory
                     if (player.getInventory().confirmItem(response.substring(6)))
@@ -303,7 +311,7 @@ public class Game
                             System.out.println("You have put on the " + response.substring(6));
                         } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                         {
-                            player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
+                            player.setHealth(player.getHealth() + player.getInventory().getElixir(response.substring(6)).getHealthBoost());
                             System.out.println("You drank all of the " + response.substring(6));
                             player.getInventory().remove(response.substring(6));
                         }
@@ -313,7 +321,7 @@ public class Game
                     }
                     looping = true;
                 }
-                else if (response.substring(0, 6).equalsIgnoreCase("remove") && response.length() > 6)
+                else if (response.length() > 6 && response.substring(0, 6).equalsIgnoreCase("remove"))
                 {
                     //check if the item exist in inventory
                     if (player.getInventory().confirmItem(response.substring(7)))
@@ -357,8 +365,8 @@ public class Game
                         continue; //prevents the next if from executing
                     }
                     //Monster retaliates
-                    System.out.println("Your last attack didn't defeat " + monster.getName() + ". You only succeeded in making " + monster.getName() + " angry.");
-                    if (player.getHealth() - monster.getAttackPower() > 0)
+                    System.out.println("Your last attack didn't defeat " + monster.getName() + " and you've been wounded by a counter-attack.");
+                    if ((player.getHealth() + player.getDefenseStrength())   - monster.getAttackPower() > 0)
                     {
                         player.setHealth(player.getHealth() - monster.getAttackPower());
                     } else
@@ -375,7 +383,7 @@ public class Game
                     }
                 } else if (response.equalsIgnoreCase("run away"))
                 {
-                    System.out.println("You ran away screaming, your heart is racing." +
+                    System.out.println("You ran away screaming; your heart is racing." +
                             "\nRefusing to look back, you think to yourself, that monster can't POSSIBLY get any stronger...");
                     monster.setHealth(monster.getHealth() + 5);
                     looping = false;
@@ -531,12 +539,18 @@ public class Game
 
             if (response.equalsIgnoreCase("inventory"))
             {
-                player.getInventory().view();
+                if (player.getInventory() == null)
+                {
+                    System.err.println("Opps! You don't have an inventory.");
+                }
+                else
+                {
+                    player.getInventory().view();
+                }
                 looping = true;
             }
             else if (response.equalsIgnoreCase("exit"))
             {
-                System.out. println("Entered exit successfully");  //DEBUG PURPOSE
                 changeRooms();
                 looping = false;
             }
@@ -550,46 +564,59 @@ public class Game
                 quitGame();
                 looping = false;
             }
-            else if(response.substring(0, 6).equalsIgnoreCase("remove") && response.length() > 6)
-            {
-                //check if the item exist in inventory
-                if (player.getInventory().confirmItem(response.substring(7)))
-                {
-                    //remove item from inventory
-                    player.getInventory().remove(response.substring(7));
-                    System.out.println("You have successfully removed " + response.substring(7) + " from your inventory");
-
-                } else
-                {
-                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
-                }
-                looping = true;
-            }
             //currently broken
-            else if (response.substring(0, 5).equalsIgnoreCase("equip"))
+            else if (response.length() > 5 && response.substring(0, 5).equalsIgnoreCase("equip"))
             {
-                //check if the item exist in inventory
-                if (player.getInventory().confirmItem(response.substring(6)))
+                if (player.getInventory() == null)
                 {
-                    //identify the item as a weapon, armor, or elixir by its itemType
-                    if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
-                    {
-                        player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
-                        System.out.println("You have drawn your " + response.substring(6));
-                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
-                    {
-                        player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
-                        System.out.println("You have put on the " + response.substring(6));
-                    } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
-                    {
-                        player.setHealth(player.getInventory().getElixir(response.substring(6)).getHealthBoost());
-                        System.out.println("You drank all of the " + response.substring(6));
-                        player.getInventory().remove(response.substring(6));
-                    }
+                    System.err.println("Opps! You don't have an inventory.");
                 }
                 else
                 {
-                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    //check if the item exist in inventory
+                    if (player.getInventory().confirmItem(response.substring(6)))
+                    {
+                        //identify the item as a weapon, armor, or elixir by its itemType
+                        if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
+                        {
+                            player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
+                            System.out.println("You have drawn your " + response.substring(6));
+                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
+                        {
+                            player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
+                            System.out.println("You have put on the " + response.substring(6));
+                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
+                        {
+                            player.setHealth(player.getHealth() + player.getInventory().getElixir(response.substring(6)).getHealthBoost());
+                            System.out.println("You drank all of the " + response.substring(6));
+                            player.getInventory().remove(response.substring(6));
+                        }
+                    } else
+                    {
+                        System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    }
+                }
+                looping = true;
+            }
+            else if(response.length() > 6 && response.substring(0, 6).equalsIgnoreCase("remove"))
+            {
+                if (player.getInventory() == null)
+                {
+                    System.err.println("Opps! You don't have an inventory.");
+                }
+                else
+                {
+                    //check if the item exist in inventory
+                    if (player.getInventory().confirmItem(response.substring(7)))
+                    {
+                        //remove item from inventory
+                        player.getInventory().remove(response.substring(7));
+                        System.out.println("You have successfully removed " + response.substring(7) + " from your inventory");
+
+                    } else
+                    {
+                        System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    }
                 }
                 looping = true;
             }
@@ -784,13 +811,6 @@ public class Game
             }
         }while(loop);
     }
-
-    // optional
-    public static void help()
-    {
-
-    }
-
 
     public static void main(String[] args)
     {
