@@ -25,6 +25,7 @@ public class Hero extends Actor
         inventory = null;  //create inventory will update this.
 	}
 	
+	//create a new inventory
 	public void createInventory()
     {
         inventory = new Inventory();
@@ -35,6 +36,7 @@ public class Hero extends Actor
 		return inventory;
 	}
 
+	//getter and setter for score, defenseStrength, and playerID
     public int getScore() {
 		return score;
 	}
