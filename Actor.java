@@ -7,11 +7,12 @@ abstract class Actor
 	private int health;	
 	private int attackPower;
 
-	//call an actor from exist account
+	//call a new actor
 	public Actor(String name) {
 		this(name, 100, 0);
 	}
 
+	//call an actor from an existing account
     public Actor (String name, int health)
     {
         this(name, health, 0);
@@ -24,6 +25,7 @@ abstract class Actor
         this.attackPower = attackPower;
     }
 
+	//getter and setter for name, health, attackPower
     public String getName() {
 		return name;
 	}
