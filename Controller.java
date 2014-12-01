@@ -602,7 +602,7 @@ public class Controller
                 if (rs.getString("playerID").equalsIgnoreCase("" + playerID))
                 {
                     int err = tdb.modData(tdb, "DELETE FROM savedInventory WHERE playerID = " + playerID);
-                    System.out.println("removed previous inventory.");  //DEBUG CODE
+//                    System.out.println("removed previous inventory.");  //DEBUG CODE
                     break;
                 }
             }
