@@ -113,7 +113,7 @@ public class Inventory
 
 
     //Removes an item from the inventory
-    public void remove(String weaponArmElix)
+    public Boolean remove(String weaponArmElix)
     {
         for(int p = 0; p < SIZELIMIT; p++)
         {
@@ -125,13 +125,13 @@ public class Inventory
                 {
                     for (int x = 0; x < SIZELIMIT; x++)
                     {
-                        if (weapons[x].getItemName().equalsIgnoreCase(weaponArmElix))
+                        if (weapons[x] != null && weapons[x].getItemName().equalsIgnoreCase(weaponArmElix))
                         {
                             weapons[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
                             itemCount--;
-                            break;
+                            return true;
                         }
                     }
                 }
@@ -140,13 +140,16 @@ public class Inventory
                     int x = 0;
                     while (x < SIZELIMIT)
                     {
-                        if (elixirs[x].getItemName().equalsIgnoreCase(weaponArmElix))
+//                        System.out.println("Elixir saved name: "+ elixirs[x].getItemName()); //DEBUG CODE
+//                        System.out.println("User entered name: " + weaponArmElix);  //DEBUG CODE
+                        if (elixirs[x] != null && elixirs[x].getItemName().equalsIgnoreCase(weaponArmElix))
                         {
                             elixirs[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
                             itemCount--;
-                            x = SIZELIMIT;
+//                            x = SIZELIMIT;
+                            return true;
                         }
                         x++;
                     }
@@ -155,19 +158,20 @@ public class Inventory
                 {
                     for (int x = 0; x < SIZELIMIT; x++)
                     {
-                        if (armors[x].getItemName().equalsIgnoreCase(weaponArmElix))
+                        if (armors[x] != null && armors[x].getItemName().equalsIgnoreCase(weaponArmElix))
                         {
                             armors[x] = null;
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
                             itemCount--;
-                            break;
+                            return true;
                         }
                     }
                 }
             }
         }
         System.out.println(weaponArmElix + " could not be found in your inventory.");
+        return false;
     }
 
     //Prints out the contents of the inventory
@@ -207,7 +211,7 @@ public class Inventory
     {
         for (int s = 0; s < SIZELIMIT; s++)
         {
-            if (weapons[s].getItemName().equalsIgnoreCase(name))
+            if (weapons[s] != null && weapons[s].getItemName().equalsIgnoreCase(name))
             {
                 return weapons[s];
             }
@@ -220,7 +224,7 @@ public class Inventory
     {
         for (int s = 0; s < SIZELIMIT; s++)
         {
-            if (elixirs[s].getItemName().equalsIgnoreCase(name))
+            if (elixirs[s] != null && elixirs[s].getItemName().equalsIgnoreCase(name))
             {
                 return elixirs[s];
             }
@@ -233,7 +237,7 @@ public class Inventory
     {
         for (int s = 0; s < SIZELIMIT; s++)
         {
-            if (armors[s].getItemName().equalsIgnoreCase(name))
+            if (armors[s] != null && armors[s].getItemName().equalsIgnoreCase(name))
             {
                 return armors[s];
             }
@@ -251,7 +255,7 @@ public class Inventory
         {
             while (h <= itemCount)
             {
-                if (name.equalsIgnoreCase(ruckSack[h][0]))
+                if (ruckSack[h][0] != null && name.equalsIgnoreCase(ruckSack[h][0]))
                 {
                     return true;
                 }
@@ -269,9 +273,9 @@ public class Inventory
     //returns itemType
     public String getItemType(String itemName)
     {
-        for (int s = 0; s < itemCount; s++)
+        for (int s = 0; s < SIZELIMIT; s++)
         {
-            if (ruckSack[s][0].equalsIgnoreCase(itemName))
+            if (ruckSack[s][0] != null && ruckSack[s][0].equalsIgnoreCase(itemName))
             {
                 return ruckSack[s][1];
             }
