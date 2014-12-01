@@ -19,8 +19,6 @@ import java.util.TreeMap;
  */
 public class Game
 {
-    //Static variables
-    //Direction direction;
     private static Hero player;
     private static Monster monster;
     private static Armor armor;
@@ -29,15 +27,10 @@ public class Game
     private static Puzzle puzzle;
     private static Rooms rooms; //should only be used in the creation of roomsMap
     private static int currentRoom;
-//    private static int[] roomOptions;
-    //private static char itemType;
-    //private static String logInName;
-   // private static String saveHero;
-    //private static String saveRoomStates;
     private static String[] heroInventory;
     private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
     private static String loginName;
-    private static Boolean loginResults;
+    private static Boolean loginResults = false;
 
     private static Scanner input = new Scanner(System.in);
 
@@ -135,7 +128,7 @@ public class Game
                 if (loginResults)
                 {
                     waiting = false;
-                    System.out.println("Account located. Loading game...");  //Debug Purposes
+                    System.out.println("Account located. Loading game...");
                 }
                 else
                 {
@@ -146,7 +139,7 @@ public class Game
             {
                 //the main menu loops if user account already exist
                 waiting = !createAccount();
-                if (!waiting){System.out.println("Your account was created!");}  //Debug Purposes
+                if (!waiting){System.out.println("Your account was created!");}
             } else
             {
                 waiting = true;
@@ -212,7 +205,6 @@ public class Game
         Controller.saveRoomState(savedRooms);
     }
 
-    //Not complete!!!
     public static void loadGame()
     {
         String[] allRooms = Controller.loadAllRooms().split("[|]");
@@ -244,16 +236,13 @@ public class Game
         //user successfully logged into saved account
         if (loginResults)
         {
-//            System.out.println("reached inside return user rooms loader");  //DEBUG PURPOSE
 
             String[] savedRooms = Controller.loadSavedRooms(player.getPlayerID()).split("[|]");
-//            System.out.println("dbsavedRooms playerID " + savedRooms[0] + "playerID populated: " + player.getPlayerID());  //DEBUG PURPOSE
 
             if (Integer.parseInt(savedRooms[0]) == player.getPlayerID())
             {
                 //retrieves the last recorded current room for this playerID
                 currentRoom = Integer.parseInt(savedRooms[1]);
-//                System.out.println("loaded currentroom" + currentRoom);  //DEBUG PURPOSE
 
                 //is the room empty (1 for true, 0 for false)
                 for (int y = 2; y <= 51; y++)
@@ -285,7 +274,7 @@ public class Game
         {
             System.out.println("-----------------------------------------");
             System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
-                    "\nEnter \"attack\" to start the fight. \nEnter \"run away\" to escape.");
+                    "\nEnter \"remove item name\" to throw away an item. \nEnter \"attack\" to start the fight. \nEnter \"run away\" to escape.");
             System.out.println("-----------------------------------------");
             System.out.println("Your health is currently: " + player.getHealth());
             System.out.println(monster.getName() + "'s health is: " + monster.getHealth());
@@ -324,7 +313,23 @@ public class Game
                         System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
                     }
                     looping = true;
-                } else if (response.equalsIgnoreCase("attack"))
+                }
+                else if (response.substring(0, 6).equalsIgnoreCase("remove") && response.length() > 6)
+                {
+                    //check if the item exist in inventory
+                    if (player.getInventory().confirmItem(response.substring(7)))
+                    {
+                        //remove item from inventory
+                        player.getInventory().remove(response.substring(7));
+                        System.out.println("You have successfully removed " + response.substring(7) + " from your inventory");
+
+                    } else
+                    {
+                        System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                    }
+                    looping = true;
+                }
+                else if (response.equalsIgnoreCase("attack"))
                 {
                     //player attacks first
                     if (monster.getHealth() - player.getAttackPower() > 0)
@@ -337,6 +342,18 @@ public class Game
                         System.out.println("You dealt a deadly blow with that last move! You killed " + monster.getName() + ".");
                         //set monster to zero for this room
                         roomsMap.get(currentRoom).setIsMonster(0);
+
+                        //Game won message
+                        if (50 == currentRoom)
+                        {
+                            System.out.println("You have rid Dragons Keep of its corrupted emperor. Thanks to you " + player.getName() + " what evil" +
+                            " was brewing just beneath the city wont be unleashed anytime soon...");
+                            System.out.println("\n-----------------------------------------------------------------------\n");
+                            System.out.println("Congratulations on successfully completing the game Dragons Keep." +
+                            "\nIt was a pleasure making this and we hope you enjoyed it! \n Like a challenge? Try completing all 50 rooms and solving all puzzles.");
+                            quitGame();
+                        }
+
                         looping = false;
                         continue; //prevents the next if from executing
                     }
@@ -506,7 +523,7 @@ public class Game
         {
             System.out.println("-----------------------------------------");
             System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
-                    "\nEnter \"save\" to save your game. \nEnter \"quit\" to quit the game. \nEnter \"exit\" to return to game");
+                    "\nEnter \"remove item name\" to throw away an item. \nEnter \"save\" to save your game. \nEnter \"quit\" to quit the game. \nEnter \"exit\" to return to game");
             System.out.println("-----------------------------------------");
             System.out.println("Your health is currently: " + player.getHealth());
             System.out.println("-----------------------------------------");
@@ -533,6 +550,21 @@ public class Game
             {
                 quitGame();
                 looping = false;
+            }
+            else if(response.substring(0, 6).equalsIgnoreCase("remove") && response.length() > 6)
+            {
+                //check if the item exist in inventory
+                if (player.getInventory().confirmItem(response.substring(7)))
+                {
+                    //remove item from inventory
+                    player.getInventory().remove(response.substring(7));
+                    System.out.println("You have successfully removed " + response.substring(7) + " from your inventory");
+
+                } else
+                {
+                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                }
+                looping = true;
             }
             //currently broken
             else if (response.substring(0, 5).equalsIgnoreCase("equip"))
