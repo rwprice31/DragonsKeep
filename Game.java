@@ -159,6 +159,7 @@ public class Game
     	String in = input.nextLine();
     	if(in.equalsIgnoreCase("yes"))
     	{
+    		//quit game after the user save the game
     		saveGame();
     		System.exit(0);
     	}
