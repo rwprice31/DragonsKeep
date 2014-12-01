@@ -593,11 +593,38 @@ public class Controller
     //inventoryState is playerID, itemType and item name
     public static Boolean saveHeroInventory(int playerID, String[][] playerInventory)
     {
-        String heroItems = ", " + playerID;
         boolean looping;
+
+
+        //if the playerID already exist, delete it
+        try
+        {
+            //Query the database. Returns the results in a ResultSet
+            rs = tdb.query(tdb, "Select * from savedInventory");
+            //Loop over the result set. next moves the cursor to the next record and returns the current record
+            while(rs.next())
+            {
+                if (rs.getString("playerID").equalsIgnoreCase("" + playerID))
+                {
+                    int err = tdb.modData(tdb, "DELETE FROM savedInventory WHERE playerID = " + playerID);
+                    System.out.println("removed previous inventory.");  //DEBUG CODE
+                    break;
+                }
+            }
+
+            rs.close();
+            stmt.close();
+        }
+        catch(SQLException sqe)
+        {
+            System.out.println(sqe.getMessage());
+        }
+
 
         for (int x = 0; x < playerInventory.length; x++)
         {
+            String heroItems = ", " + playerID;
+
             if (playerInventory[x][1] != null)
             if (playerInventory[x][1].equalsIgnoreCase("w"))
             {
@@ -679,50 +706,32 @@ public class Controller
             }
             else
                 continue;
-        }
 
-
-        //if the playerID already exist, delete it
-        try
-        {
-            //Query the database. Returns the results in a ResultSet
-            rs = tdb.query(tdb, "Select * from savedInventory");
-            //Loop over the result set. next moves the cursor to the next record and returns the current record
-            while(rs.next())
+            if (playerInventory[x][1] != null)
+            do
             {
-                if (rs.getString("playerID").equalsIgnoreCase("" + playerID))
+                int err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
+                        "values (" + shiKey + heroItems + ")");
+
+                //if no rows were changed
+                if (err == 0)
                 {
-                    int err = tdb.modData(tdb, "DELETE FROM savedInventory WHERE playerID = " + playerID);
-                    break;
+                    shiKey++;
+                    looping = true;
                 }
-            }
-
-            rs.close();
-            stmt.close();
-        }
-        catch(SQLException sqe)
-        {
-            System.out.println(sqe.getMessage());
+                else
+                {
+                    System.out.println("Successfully saved Hero inventory to the database.");
+                    looping = false;
+                }
+            }while(looping);
         }
 
 
-        do
-        {
-            int err = tdb.modData(tdb, "Insert into savedInventory(inventoryID, playerID, weaponID, armorID, elixirID) " +
-                    "values (" + shiKey + heroItems + ")");
 
-            //if no rows were changed
-            if (err == 0)
-            {
-                shiKey++;
-                looping = true;
-            }
-            else
-            {
-                System.out.println("Successfully saved Hero inventory to the database.");
-                looping = false;
-            }
-        }while(looping);
+
+
+
         return true;
     }
 
