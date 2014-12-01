@@ -115,10 +115,10 @@ public class Inventory
     //Removes an item from the inventory
     public void remove(String weaponArmElix)
     {
-        for(int p = 0; p <= SIZELIMIT; p++)
+        for(int p = 0; p < SIZELIMIT; p++)
         {
             //locate the item name
-            if (ruckSack[p][0].equalsIgnoreCase(weaponArmElix))
+            if (ruckSack[p][0] != null && ruckSack[p][0].equalsIgnoreCase(weaponArmElix))
             {
                 //identify the item
                 if (ruckSack[p][1].equalsIgnoreCase("w"))
@@ -137,7 +137,8 @@ public class Inventory
                 }
                 else if (ruckSack[p][1].equalsIgnoreCase("e"))
                 {
-                    for (int x = 0; x < SIZELIMIT; x++)
+                    int x = 0;
+                    while (x < SIZELIMIT)
                     {
                         if (elixirs[x].getItemName().equalsIgnoreCase(weaponArmElix))
                         {
@@ -145,8 +146,9 @@ public class Inventory
                             ruckSack[p][0] = null;
                             ruckSack[p][1] = null;
                             itemCount--;
-                            break;
+                            x = SIZELIMIT;
                         }
+                        x++;
                     }
                 }
                 else //armor
