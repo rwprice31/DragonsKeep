@@ -13,5 +13,7 @@ HOW TO RUN
 
 2) Get the lastest database file and attach it to the game. If DragonsKeep.txt is the only database file,
    convert it to a .db or get the lastest from gitHub branch "Database".
+   
+3) The file DragonsKeepV4.jar is the runnable file allowing users to run their game without having a compiler.
 
 
