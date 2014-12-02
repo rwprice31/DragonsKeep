@@ -31,6 +31,7 @@ public class Game
     private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
     private static String loginName;
     private static Boolean loginResults = false;
+    private static Boolean accountSaved = false;
 
     private static Scanner input = new Scanner(System.in);
 
@@ -158,6 +159,7 @@ public class Game
     	String in = input.nextLine();
     	if(in.equalsIgnoreCase("yes"))
     	{
+    		//quit game after the user save the game
     		saveGame();
     		System.exit(0);
     	}
@@ -176,9 +178,10 @@ public class Game
     public static void saveGame()
     {
         //an Account is created in the database and the ID is set if the user did not login
-        if (!loginResults)
+        if (!loginResults && !accountSaved)
         {
             player.setPlayerID(Controller.createAccount(player.getName()));
+            accountSaved = true;
         }
 
 
@@ -302,15 +305,15 @@ public class Game
                     if (player.getInventory().confirmItem(response.substring(6)))
                     {
                         //identify the item as a weapon, armor, or elixir by its itemType
-                        if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
+                        if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
                         {
                             player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
                             System.out.println("You have drawn your " + response.substring(6));
-                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
+                        } else if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
                         {
                             player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
                             System.out.println("You have put on the " + response.substring(6));
-                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
+                        } else if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                         {
                             player.setHealth(player.getHealth() + player.getInventory().getElixir(response.substring(6)).getHealthBoost());
                             System.out.println("You drank all of the " + response.substring(6));
@@ -366,10 +369,13 @@ public class Game
                         continue; //prevents the next if from executing
                     }
                     //Monster retaliates
-                    System.out.println("Your last attack didn't defeat " + monster.getName() + " and you've been wounded by a counter-attack.");
+                    System.out.println("Your last attack didn't defeat " + monster.getName() + " and you've been hit with a counter-attack.");
                     if ((player.getHealth() + player.getDefenseStrength())   - monster.getAttackPower() > 0)
                     {
-                        player.setHealth(player.getHealth() - monster.getAttackPower());
+                        if ((player.getHealth() + player.getDefenseStrength())  - monster.getAttackPower() <= player.getHealth())
+                        {
+                            player.setHealth((player.getHealth() + player.getDefenseStrength()) - monster.getAttackPower());
+                        }
                     } else
                     {
                         System.out.println("Your losing a lot of blood, you don't know how." + monster.getName() + "attacked you so fast! \nYour stumbling towards the door..." +
@@ -578,15 +584,15 @@ public class Game
                     if (player.getInventory().confirmItem(response.substring(6)))
                     {
                         //identify the item as a weapon, armor, or elixir by its itemType
-                        if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
+                        if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("w"))
                         {
                             player.setAttackPower(player.getInventory().getWeapon(response.substring(6)).getStrength());
                             System.out.println("You have drawn your " + response.substring(6));
-                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
+                        } else if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("a"))
                         {
                             player.setDefenseStrength(player.getInventory().getArmor(response.substring(6)).getArmorDefense());
                             System.out.println("You have put on the " + response.substring(6));
-                        } else if (player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
+                        } else if (player.getInventory().getItemType(response.substring(6)) != null && player.getInventory().getItemType(response.substring(6)).equalsIgnoreCase("e"))
                         {
                             player.setHealth(player.getHealth() + player.getInventory().getElixir(response.substring(6)).getHealthBoost());
                             System.out.println("You drank all of the " + response.substring(6));
