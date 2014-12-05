@@ -1,30 +1,24 @@
-package Model; /**Class: Armor
- *
-@author Everton Gardiner Jr.	
+package Model;
+/**
+ * @author Everton Gardiner Jr.
  * @version 1.0
  * Course : ITEC 3860 Spring 2014
  * Written: Nov 14, 2014
- *
- *
  *
  * This class illustrates how to create an Armor object
  *
  * Purpose: To create and Armor object
  */
-
-/**
- * @author egardiner
- *
- */
 public class Armor extends Item
 {
-
+    //instance variables
 	private int armorDefense;
 
 	/**
 	 * Method: Constructor for Armor class
 	 * Constructor for Armor class that has int String, and int as arguments
-	 * @param itemName
+	 * @param itemName The name of the armor
+     * @param armorDefense The defence strength of the armor
 	 */
 	public Armor(String itemName,int armorDefense)
 	{
@@ -40,15 +34,5 @@ public class Armor extends Item
 	public int getArmorDefense()
 	{
 		return armorDefense;
-	}
-
-	/**
-	 * Method: setHealthBoost
-	 * This method changes the current health boost of the Armor object
-	 * @param armorDefense new armor Defense of the Armor object
-	 */
-	public void setArmorDefense(int armorDefense)
-	{
-		this.armorDefense = armorDefense;
 	}
 }

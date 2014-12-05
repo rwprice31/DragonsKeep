@@ -1,6 +1,6 @@
 package View;
 
-import Controller.Controller;
+import Controller.*;
 import Model.*;
 
 import java.util.Map;
@@ -13,40 +13,38 @@ import java.util.TreeMap;
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
- * This class represents a ...
+ * This class represents a game user interface
  *
- * Purpose: Allows the manipulation of a ...
+ * Purpose: Allows a player to play the game and interact with other classes and objects.
  */
 public class Game
 {
+    //static instance variables
     private static Hero player;
-    private static Monster monster;
     private static Armor armor;
     private static Weapon weapon;
     private static Elixir elixir;
-    private static Puzzle puzzle;
-    private static Rooms rooms; //should only be used in the creation of roomsMap
     private static int currentRoom;
-    private static String[] heroInventory;
     private static Map<Integer,Rooms> roomsMap; //Map<room, roomObj>
-    private static String loginName;
     private static Boolean loginResults = false;
     private static Boolean accountSaved = false;
 
     private static Scanner input = new Scanner(System.in);
 
-
+    /**This manages the login interface
+     * @return true/false Indicates successful or unsuccessful login
+     */
     public static boolean login()
     {
         System.out.println("Enter your user name: ");
-        loginName = input.nextLine();
+        String loginName = input.nextLine();
 
         //verify user account exist
         if (Controller.loginAccount(loginName))
         {
             //get saved player data
-            String[] loginDetails = Controller.loadHero(loginName).split("[|]");
-            // player(ID, name, score, health)
+            String[] loginDetails = ControllerLoad.loadHero(loginName).split("[|]");
+            //create player with ID, name, score, and health from saved information
             player = new Hero(Integer.parseInt(loginDetails[0]), loginDetails[1], Integer.parseInt(loginDetails[3]), Integer.parseInt(loginDetails[4]));
 
             //check for an inventory
@@ -54,7 +52,7 @@ public class Game
             {
                 int p = 0;
                 player.createInventory();
-                heroInventory = Controller.loadHeroInventory(player.getPlayerID()).split("[|]");
+                String[] heroInventory = ControllerLoad.loadHeroInventory(player.getPlayerID()).split("[|]");
 
                 while(p < heroInventory.length-2)
                 {
@@ -62,27 +60,30 @@ public class Game
                     if (!heroInventory[p].equalsIgnoreCase("0"))
                     {
                         //get the weapon from the database
-                        String[] dbWeapon = Controller.retrieveWeapon(Integer.parseInt(heroInventory[p])).split("[|]");
+                        String[] dbWeapon = ControllerLoad.retrieveWeapon(Integer.parseInt(heroInventory[p])).split("[|]");
                         //builds an weapon(name, strength)
                         weapon = new Weapon(dbWeapon[0], Integer.parseInt(dbWeapon[1]));
+                        //adds it to inventory
                         player.getInventory().add(weapon);
                     }
                     //checks if a armorID exists
                     else if (!heroInventory[p+1].equalsIgnoreCase("0"))
                     {
                         //get the armor from the database
-                        String[] dbArmor = Controller.retrieveArmor(Integer.parseInt(heroInventory[p + 1])).split("[|]");
+                        String[] dbArmor = ControllerLoad.retrieveArmor(Integer.parseInt(heroInventory[p + 1])).split("[|]");
                         //builds an armor(name, defenseBoost)
                         armor = new Armor(dbArmor[0], Integer.parseInt(dbArmor[1]));
+                        //adds it to inventory
                         player.getInventory().add(armor);
                     }
                     //checks if a elixirID exists
                     else if (!heroInventory[p+2].equalsIgnoreCase("0"))
                     {
                         //get the elixir from the database
-                        String[] dbElixir = Controller.retrieveElixir(Integer.parseInt(heroInventory[p+2])).split("[|]");
+                        String[] dbElixir = ControllerLoad.retrieveElixir(Integer.parseInt(heroInventory[p+2])).split("[|]");
                         //builds an elixir(name, healthBoost)
                         elixir = new Elixir(dbElixir[0], Integer.parseInt(dbElixir[1]));
+                        //adds it to inventory
                         player.getInventory().add(elixir);
                     }
                     p+=3;
@@ -96,8 +97,9 @@ public class Game
         }
     }
 
-    //(!)(!)ERROR:: Somehow ensure player does not enter the same name as another player.
-    //CALL login Account FIRST to ensure it comes back false for no name found!
+    /**This manages the create account interface
+     * @return true/false Indicates successful or unsuccessful account creation
+     */
     public static boolean createAccount()
     {
         System.out.println("Enter a name you would like to create for your account: ");
@@ -107,17 +109,18 @@ public class Game
         {
             //defaults to playerID 0 until save is called
             player = new Hero(name, 0);
-//            player = new Hero(name, Controller.createAccount(name));
             return true;
         }
         System.out.println("An account with that name already exist.");
         return false;
     }
 
+    /**This method welcomes the player and points to login() or CreateAccount() depending on the player's actions
+     */
     public static void playGame()
     {
         Boolean waiting;
-        System.out.println("Welcome to Dragon's Keep!");
+        System.out.println("Welcome to Dragon's Keep!");  //Game welcome message
 
         do
         {
@@ -140,7 +143,7 @@ public class Game
                 }
             } else if (in.equalsIgnoreCase("2"))
             {
-                //the main menu loops if user account already exist
+                //Attempts to create a user account if one does not already exist
                 waiting = !createAccount();
                 if (!waiting){System.out.println("Your account was created!");}
             } else
@@ -153,6 +156,8 @@ public class Game
         enteredRoom();
     }
 
+    /**This method handles the player's request to quit the game
+     */
     public static void quitGame()
     {
         System.out.println("Do you want to save your game before closing? (yes/no)");
@@ -173,6 +178,8 @@ public class Game
         }
     }
 
+    /**The method manages the player's request to save the game
+     */
     public static void saveGame()
     {
         //an Account is created in the database and the ID is set if the user did not login
@@ -182,7 +189,7 @@ public class Game
             accountSaved = true;
         }
 
-
+        //Prepares the players stats: ID, name, hasInventory, score, and health to be save in the db
         String heroData = player.getPlayerID() + "|" + player.getName() + "|";
         if (player.getInventory() != null)
         {
@@ -194,10 +201,10 @@ public class Game
         }
         heroData += player.getScore() + "|" + player.getHealth();
         //saves the player ID, name, hasInventory, score, and health to the database
-        Controller.saveHeroData(heroData);  //testing with fixed values
+        ControllerSave.saveHeroData(heroData);  //testing with fixed values
 
         //saves the player's inventory
-        Controller.saveHeroInventory(player.getPlayerID(), player.getInventory().getRuckSack());
+        ControllerSave.saveHeroInventory(player.getPlayerID(), player.getInventory().getRuckSack());
 
         //saves the state of all the rooms for this player
         String savedRooms = player.getPlayerID() + "|" + currentRoom;
@@ -212,26 +219,31 @@ public class Game
                 savedRooms += "|" + 1;
             }
         }
-        Controller.saveRoomState(savedRooms);
+        ControllerSave.saveRoomState(savedRooms);
     }
 
+    /**This method loads the game one a save has been retrieved successfully or an account has been created
+     */
     public static void loadGame()
     {
-        String[] allRooms = Controller.loadAllRooms().split("[|]");
+        //Loads all the rooms into an array
+        String[] allRooms = ControllerLoad.retrieveAllRooms().split("[|]");
         String[] temp = new String[4];
+        //creates a rooms Map using the roomID as the key and the room as the object
         roomsMap = new TreeMap<Integer, Rooms>();
 
+        //loops through the rooms array to create a room object before adding the room object to the roomsMap
         for (int i = 0; i < allRooms.length-11; i= i+12)
         {
-            rooms = new Rooms();
+            Rooms rooms = new Rooms();
             temp[0] = allRooms[i+1];
             temp[1] = allRooms[i+2];
             temp[2] = allRooms[i+3];
             temp[3] = allRooms[i+4];
             rooms.setChoices(temp);
 
-            rooms.setRoomDescription(allRooms[i + 5]);  //THIS WOULD CHANGE FOR LOGIN
-            rooms.setIsEmpty(Integer.parseInt(allRooms[i + 6]));  //THIS WOULD CHANGE FOR LOGIN
+            rooms.setRoomDescription(allRooms[i + 5]);  //THIS will CHANGE FOR LOGIN
+            rooms.setIsEmpty(Integer.parseInt(allRooms[i + 6]));  //THIS will CHANGE FOR LOGIN
             rooms.setIsArmor(Integer.parseInt(allRooms[i + 7])); //points to the specific armor
             rooms.setIsElixir(Integer.parseInt(allRooms[i + 8])); //points to the specific elixir
             rooms.setIsWeapon(Integer.parseInt(allRooms[i + 9])); //points to the specific weapon
@@ -246,7 +258,7 @@ public class Game
         //user successfully logged into saved account
         if (loginResults)
         {
-            String[] savedRooms = Controller.loadSavedRooms(player.getPlayerID()).split("[|]");
+            String[] savedRooms = ControllerLoad.loadSavedRooms(player.getPlayerID()).split("[|]");
 
             if (Integer.parseInt(savedRooms[0]) == player.getPlayerID())
             {
@@ -271,16 +283,19 @@ public class Game
         }
     }
 
+    /**This method handles the fight interactions between the player and an enemy
+     */
     public static void battle()
     {
         //create monster
-        String[] dbMonster = Controller.retrieveMonster(roomsMap.get(currentRoom).getIsMonster()).split("[|]");
-        monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
+        String[] dbMonster = ControllerLoad.retrieveMonster(roomsMap.get(currentRoom).getIsMonster()).split("[|]");
+        Monster monster = new Monster(dbMonster[0], Integer.parseInt(dbMonster[1]), Integer.parseInt(dbMonster[2]));
         boolean looping;
         System.out.println("*****************************************");
 
         do
         {
+            //prints a pre-fight menu
             System.out.println("-----------------------------------------");
             System.out.println("Enter \"inventory\" to check inventory. \nEnter \"equip item name\" to equip a specific item in inventory." +
                     "\nEnter \"remove item name\" to throw away an item. \nEnter \"attack\" to start the fight. \nEnter \"run away\" to escape.");
@@ -291,6 +306,7 @@ public class Game
 
             String response = input.nextLine();
 
+            //compares the user response against possible choices
             if (response.length() > 5)
             {
                 if (response.equalsIgnoreCase("inventory"))
@@ -406,8 +422,11 @@ public class Game
         }while(looping);
     }
 
+    /**This method sets a room as empty once it has been visited and there is nothing more to do in the room
+     */
     public static void emptyRoom()
     {
+        //checks if every interaction with this particular room is set to 0
         if (roomsMap.get(currentRoom).getIsMonster() == 0 && roomsMap.get(currentRoom).getIsPuzzle() == 0 &&
             roomsMap.get(currentRoom).getIsArmor() == 0 && roomsMap.get(currentRoom).getIsWeapon() == 0 &&
             roomsMap.get(currentRoom).getIsElixir() == 0)
@@ -442,12 +461,15 @@ public class Game
         }
     }
 
+    /**This method manages the collection of any given item found in a room
+     */
     public static void collectItem()
     {
+        //collect the armor in the room
         if (roomsMap.get(currentRoom).getIsArmor() > 0)
         {
             //get an armor from the database
-            String[] dbArmor = Controller.retrieveArmor(roomsMap.get(currentRoom).getIsArmor()).split("[|]");
+            String[] dbArmor = ControllerLoad.retrieveArmor(roomsMap.get(currentRoom).getIsArmor()).split("[|]");
             //builds an armor(name, defenseBoost)
             armor = new Armor(dbArmor[0], Integer.parseInt(dbArmor[1]));
             player.getInventory().add(armor);
@@ -455,10 +477,12 @@ public class Game
 
             System.out.println("You have found " + dbArmor[0] + " and added it to your inventory.");
 
-        } else if (roomsMap.get(currentRoom).getIsElixir() > 0)
+        }
+        //collect the elixir in the room
+        else if (roomsMap.get(currentRoom).getIsElixir() > 0)
         {
             //get an elixir from the database
-            String[] dbElixir = Controller.retrieveElixir(roomsMap.get(currentRoom).getIsElixir()).split("[|]");
+            String[] dbElixir = ControllerLoad.retrieveElixir(roomsMap.get(currentRoom).getIsElixir()).split("[|]");
             //builds an elixir(name, healthBoost)
             elixir = new Elixir(dbElixir[0], Integer.parseInt(dbElixir[1]));
             player.getInventory().add(elixir);
@@ -466,10 +490,12 @@ public class Game
 
             System.out.println("You have found " + dbElixir[0] + " and added it to your inventory.");
 
-        } else
+        }
+        //collect the weapon in the room
+        else
         {
             //get an weapon from the database
-            String[] dbWeapon = Controller.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon()).split("[|]");
+            String[] dbWeapon = ControllerLoad.retrieveWeapon(roomsMap.get(currentRoom).getIsWeapon()).split("[|]");
             //builds an weapon(name, strength)
             weapon = new Weapon(dbWeapon[0], Integer.parseInt(dbWeapon[1]));
             player.getInventory().add(weapon);
@@ -479,19 +505,22 @@ public class Game
         }
     }
 
-    //this is how puzzle solving is handled
+    /**This method manages the interaction with any given puzzle
+     */
     public static void solvePuzzle()
     {
         //create and puzzle from the db
-        String[] dbPuzzle = Controller.retrievePuzzle(roomsMap.get(currentRoom).getIsPuzzle()).split("[|]");
-        puzzle = new Puzzle(dbPuzzle[0], dbPuzzle[1], dbPuzzle[2], dbPuzzle[3], Integer.parseInt(dbPuzzle[4]));
+        String[] dbPuzzle = ControllerLoad.retrievePuzzle(roomsMap.get(currentRoom).getIsPuzzle()).split("[|]");
+        Puzzle puzzle = new Puzzle(dbPuzzle[0], dbPuzzle[1], dbPuzzle[2], dbPuzzle[3], Integer.parseInt(dbPuzzle[4]));
         Boolean repeatPuzzle = false;
 
         do
         {
+            //print the puzzle description and read the user's response
             System.out.println(puzzle.getPuzzle());
             String response = input.nextLine();
 
+            //compares the solution to the answer
             if (puzzle.getSolution().equalsIgnoreCase(response))
             {
                 repeatPuzzle = false;
@@ -528,6 +557,8 @@ public class Game
         }while(repeatPuzzle);
     }
 
+    /**This is the in game menu the player can call at any time
+     */
     public static void gameMenu()
     {
         boolean looping;
@@ -569,7 +600,6 @@ public class Game
                 quitGame();
                 looping = false;
             }
-            //currently broken
             else if (response.length() > 5 && response.substring(0, 5).equalsIgnoreCase("equip"))
             {
                 if (player.getInventory() == null)
@@ -603,6 +633,7 @@ public class Game
                 }
                 looping = true;
             }
+            //removes an item from inventory
             else if(response.length() > 6 && response.substring(0, 6).equalsIgnoreCase("remove"))
             {
                 if (player.getInventory() == null)
@@ -633,13 +664,15 @@ public class Game
         }while(looping);
     }
 
+    /**This manages the changing from one room to another
+     */
     public static void changeRooms()
     {
         Boolean loop;
 
         //display possible exits
         String roomDirection = "<";
-        //checks the 4 possible exits
+        //checks which of 4 possible exits this particular room has
         for (int x = 0; x < 4; x++)
         {
             //if an exit exist
@@ -662,6 +695,7 @@ public class Game
         }
         roomDirection += "> ";
 
+        //Prompts the user to change to a new room or enter the menu screen
         do
         {
             System.out.println(roomDirection + "Where would you like to go next or enter \"menu\" to pull up the game menu.");
@@ -711,15 +745,19 @@ public class Game
         } while(loop);
     }
 
+    /**Manages room interactions
+     */
     public static void enteredRoom()
     {
+        //Displays the current room description
         System.out.println(roomsMap.get(currentRoom).getRoomDescription());
         String response;
         boolean loop;
 
         do
         {
-            //rucksack is not an item, monster or puzzle so this is necessary!
+            //rucksack is not an item, monster or puzzle and is therefore not represented in the
+            //db for the first room except to say the room is not empty. This makes the if below necessary!
             if (2 == currentRoom && player.getInventory() == null)
             {
                 System.out.println("Do you want to collect the rucksack? (yes/no)");
@@ -729,37 +767,18 @@ public class Game
                 {
                     loop = true;
                     player.createInventory();
+                    System.out.println("You've acquired a rucksack which gives you access to an inventory for holding 10 items");
                 }
                 //The user may get a different response in the final game so this is Tentative
                 else if (response.equalsIgnoreCase("no"))
                 {
                     System.out.println("You shake your head no but then hear a terrifying scream of someone further in." + "" +
                             "\nIt sounds like they most certainly met their demise... or wish they had. You look back" +
-                            "down on the dirty, stained rucksack and suddenly it doesn't look so bad. Maybe it could come in handy." +
+                            "down on the dirty, stained rucksack\nand suddenly it doesn't look so bad. Maybe it could come in handy." +
                             "You've acquired a rucksack which gives you access to an inventory for holding 10 items");
 
                     loop = true;
                     player.createInventory();
-                } else
-                {
-                    loop = true;
-                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
-                }
-            }
-            //checks if an monster is in the room
-            else if (roomsMap.get(currentRoom).getIsMonster() > 0)
-            {
-                System.out.println("Are you going to fight the monster? (yes/no)");
-                response = input.nextLine();
-
-                if (response.equalsIgnoreCase("yes"))
-                {
-                    loop = true;
-                    battle();
-                } else if (response.equalsIgnoreCase("no"))
-                {
-                    loop = false;
-                    changeRooms();
                 } else
                 {
                     loop = true;
@@ -776,6 +795,26 @@ public class Game
                 {
                     loop = true;
                     solvePuzzle();
+                } else if (response.equalsIgnoreCase("no"))
+                {
+                    loop = false;
+                    changeRooms();
+                } else
+                {
+                    loop = true;
+                    System.err.println("There was an error in trying to make sense of you request. Check your spelling.");
+                }
+            }
+            //checks if an monster is in the room
+            else if (roomsMap.get(currentRoom).getIsMonster() > 0)
+            {
+                System.out.println("Are you going to fight the monster? (yes/no)");
+                response = input.nextLine();
+
+                if (response.equalsIgnoreCase("yes"))
+                {
+                    loop = true;
+                    battle();
                 } else if (response.equalsIgnoreCase("no"))
                 {
                     loop = false;
@@ -817,6 +856,10 @@ public class Game
         }while(loop);
     }
 
+    /**
+     * This starts the program and calls playGame()
+     * @param args
+     */
     public static void main(String[] args)
     {
         playGame();

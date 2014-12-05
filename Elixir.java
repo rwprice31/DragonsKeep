@@ -1,20 +1,14 @@
-package Model; /**Class: Elixer
- *
-@author Everton Gardiner Jr.	
+package Model;
+
+/**
+ * @author Everton Gardiner Jr.
  * @version 1.0
  * Course : ITEC 3860 Fall 2014
  * Written: Nov 14, 2014
  *
+ * This class illustrates how to create and Elixir object
  *
- *
- * This class illustrates how to create and Elixer object
- *
- * Purpose: To create an Elixer object
- */
-
-/**
- * @author egardiner
- *
+ * Purpose: To create an Elixir object
  */
 public class Elixir extends Item
 {
@@ -22,9 +16,9 @@ public class Elixir extends Item
 
 	/**
 	 * Method: Constructor
-	 * Constructor for Elixer class
-	 * @param name
-     * @param healthBoost
+	 * Constructor for Elixir class
+	 * @param name The name of the elixir
+     * @param healthBoost The health boost found in the elixir
 	 */
 	public Elixir(String name, int healthBoost)
 	{
@@ -36,21 +30,11 @@ public class Elixir extends Item
 
 	/**
 	 * Method: getHealthBoost
-	 * This method gets the current health boost of the Elixer object
-	 * @return the current health boost of the Elixer object
+	 * This method gets the current health boost of the Elixir object
+	 * @return the current health boost of the Elixir object
 	 */
 	public int getHealthBoost()
 	{
 		return healthBoost;
-	}
-
-	/**
-	 * Method: setHealthBoost
-	 * This method changes the health boost of the Elixer object
-	 * @param healthBoost new health boost of the Elixer object
-	 */
-	public void setHealthBoost(int healthBoost)
-	{
-		this.healthBoost = healthBoost;
 	}
 }
