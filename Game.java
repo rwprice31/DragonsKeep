@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 /**
  * author: JJ Lindsay
- * version: 4.2
+ * version: 4.2.1
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *
@@ -203,10 +203,10 @@ public class Game
         }
         heroData += player.getScore() + "|" + player.getHealth();
         //saves the player ID, name, hasInventory, score, and health to the database
-        ControllerSave.saveHeroData(heroData);  //testing with fixed values
+        ControllerUpdate.saveHeroData(heroData);  //testing with fixed values
 
         //saves the player's inventory
-        ControllerSave.saveHeroInventory(player.getPlayerID(), player.getInventory().getRuckSack());
+        ControllerUpdate.saveHeroInventory(player.getPlayerID(), player.getInventory().getRuckSack());
 
         //saves the state of all the rooms for this player
         String savedRooms = player.getPlayerID() + "|" + currentRoom;
@@ -221,7 +221,7 @@ public class Game
                 savedRooms += "|" + 1;
             }
         }
-        ControllerSave.saveRoomState(savedRooms);
+        ControllerUpdate.saveRoomState(savedRooms);
     }
 
     /**This method loads the game one a save has been retrieved successfully or an account has been created

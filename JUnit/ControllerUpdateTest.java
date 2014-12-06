@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
  * Course: ITEC 3860 Fall 2014
  * Written: 12/5/2014
  *
- * This class represents an Controller JUnit Test.
+ * This class represents a ControllerUpdate JUnit Test.
  *
- * Purpose: Tests all the methods in the ControllerSave class.
+ * Purpose: Tests all the methods in the ControllerUpdate class.
  */
-public class ControllerSaveTest
+public class ControllerUpdateTest
 {
     static Controller tdb = new Controller();
     static int playerID;
@@ -48,18 +48,18 @@ public class ControllerSaveTest
     @Test
     public void testSaveHeroData() throws Exception
     {
-        assertTrue(ControllerSave.saveHeroData(playerID + "|JUnitTestName|1|93|12"));
+        assertTrue(ControllerUpdate.saveHeroData(playerID + "|JUnitTestName|1|93|12"));
     }
 
     @Test
     public void testSaveRoomState() throws Exception
     {
-        String rooms = 25 + "|" + 14;
+        String rooms = playerID + "|" + 14;
         for (int i = 1; i <= 50;  i++)
         {
             rooms += "|" + (i%2);
         }
-        assertTrue(ControllerSave.saveRoomState(rooms));
+        assertTrue(ControllerUpdate.saveRoomState(rooms));
     }
 
     @Test
@@ -73,7 +73,7 @@ public class ControllerSaveTest
         tempInventory[2][0] = "Blue Elixir";
         tempInventory[2][1] = "e";
 
-        assertTrue(ControllerSave.saveHeroInventory(playerID, tempInventory));
+        assertTrue(ControllerUpdate.saveHeroInventory(playerID, tempInventory));
     }
 
     @AfterClass

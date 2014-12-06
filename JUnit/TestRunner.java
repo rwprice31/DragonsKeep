@@ -10,7 +10,7 @@ import org.junit.runner.notification.Failure;
  * Course: ITEC 3150 Fall 2014
  * Written: 12/5/2014
  *
- * This class represents a Junit Test
+ * This class represents a Junit Test runner
  *
  * Purpose: To run all the Junit Test in InventoryTest
  */
