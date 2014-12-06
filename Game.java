@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 /**
  * author: JJ Lindsay
- * version: 4.1
+ * version: 4.2
  * Course: ITEC 3860 Fall 2014
  * Written: 11/16/2014
  *

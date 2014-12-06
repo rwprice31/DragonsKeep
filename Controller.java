@@ -57,7 +57,6 @@ public class Controller
         {
             System.out.println(sqe.getMessage());
         }
-
     }
 
     /**verifies the user account
@@ -74,7 +73,7 @@ public class Controller
             //Loop over the result set. next moves the cursor to the next record and returns the current record
             while(rs.next())
             {
-                if (playerName.equalsIgnoreCase(rs.getString("name")))
+                if (playerName != null && playerName.equalsIgnoreCase(rs.getString("name")))
                 {
                     return true;
                 }

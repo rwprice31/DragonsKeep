@@ -283,7 +283,7 @@ public class Inventory
     {
         int h = 0;
 
-        if (itemCount > 0)
+        if (itemCount > 0 && weaponArmElixName != null)
         {
             while (h <= itemCount)
             {
@@ -315,7 +315,7 @@ public class Inventory
                 return ruckSack[s][1];
             }
         }
-        System.out.println("DEBUG CODE " + weaponArmElixName + " could not be found in your inventory."); //This will come out the final version
+        System.out.println("An item type for " + weaponArmElixName + " could not be found in your inventory."); //This will come out the final version
         return null;
     }
 
