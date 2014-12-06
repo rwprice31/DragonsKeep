@@ -7,12 +7,11 @@ Dragons Keep is a text based adventure game being written for ITEC 3860, Softwar
 HOW TO RUN
 --------------
 1) The game opens from the game class.
-     VIEW Package: game.java
-     CONTROLLER Package: Controller.java
-     Model Package: All remaining java files
+     VIEW Package contains: game.java
+     CONTROLLER Package contains: Controller.java, ControllerSave.java, ControllerLoad.java, ControllerCreate.java
+     Model Package contains: All remaining java files
 
-2) Get the lastest database file and attach it to the game. If DragonsKeep.txt is the only database file,
-   convert it to a .db or get the lastest from gitHub branch "Database".
+2) The lastest database file is titled "DragonsKeep.db". Attach it to the game.
    
 3) The file DragonsKeepV4.jar is the runnable file allowing users to run their game without having a compiler
 
