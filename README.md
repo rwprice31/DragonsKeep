@@ -15,4 +15,5 @@ HOW TO RUN
    
 3) The file DragonsKeepV4.jar is the runnable file allowing users to run their game without having a compiler
 
-
+4) JUNIT TESTS: All the controllerTest must be in the same package as the controller classes.
+		The JUnitTestSuite and InventoryTest can be in any package.
