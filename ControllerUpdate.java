@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 /**
  * author: JJ Lindsay
- * version: 1.0
+ * version: 1.1
  * Course: ITEC 3150 Fall 2014
  * Written: 12/5/2014
  *
@@ -13,7 +13,7 @@ import java.sql.SQLException;
  *
  * Purpose: Gives the ability to save the player's inventory, stats, and rooms into the database
  */
-public class ControllerSave
+public class ControllerUpdate
 {
     private static Controller tdb = new Controller();
     private static int shiKey = 1;
